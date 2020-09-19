@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <sys/select.h>
+
 #include <atomic>
 #include <functional>
 #include <map>

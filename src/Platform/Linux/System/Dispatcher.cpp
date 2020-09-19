@@ -67,6 +67,7 @@ Dispatcher::Dispatcher() {
     message = "epoll_create1 failed, " + lastErrorMessage();
   } else {
     mainContext.ucontext = new ucontext_t;
+    #ifdef __GLIBC__
     if (getcontext(reinterpret_cast<ucontext_t*>(mainContext.ucontext)) == -1) {
       message = "getcontext failed, " + lastErrorMessage();
     } else {
@@ -105,6 +106,7 @@ Dispatcher::Dispatcher() {
         assert(result == 0);
       }
     }
+    #endif
 
     auto result = close(epoll);
     assert(result == 0);
@@ -215,9 +217,11 @@ void Dispatcher::dispatch() {
   if (context != currentContext) {
     ucontext_t* oldContext = static_cast<ucontext_t*>(currentContext->ucontext);
     currentContext = context;
+    #ifdef __GLIBC__
     if (swapcontext(oldContext, static_cast<ucontext_t *>(context->ucontext)) == -1) {
       throw std::runtime_error("Dispatcher::dispatch, swapcontext failed, " + lastErrorMessage());
     }
+    #endif
   }
 }
 
@@ -364,21 +368,27 @@ int Dispatcher::getEpoll() const {
 NativeContext& Dispatcher::getReusableContext() {
   if(firstReusableContext == nullptr) {
     ucontext_t* newlyCreatedContext = new ucontext_t;
+    #ifdef __GLIBC__
     if (getcontext(newlyCreatedContext) == -1) { //makecontext precondition
       throw std::runtime_error("Dispatcher::getReusableContext, getcontext failed, " + lastErrorMessage());
     }
+    #endif
 
     auto stackPointer = new uint8_t[STACK_SIZE];
     newlyCreatedContext->uc_stack.ss_sp = stackPointer;
     newlyCreatedContext->uc_stack.ss_size = STACK_SIZE;
 
     ContextMakingData makingContextData {this, newlyCreatedContext};
+    #ifdef __GLIBC__
     makecontext(newlyCreatedContext, (void(*)())contextProcedureStatic, 1, reinterpret_cast<int*>(&makingContextData));
+    #endif
 
     ucontext_t* oldContext = static_cast<ucontext_t*>(currentContext->ucontext);
+    #ifdef __GLIBC__
     if (swapcontext(oldContext, newlyCreatedContext) == -1) {
       throw std::runtime_error("Dispatcher::getReusableContext, swapcontext failed, " + lastErrorMessage());
     }
+    #endif
 
     assert(firstReusableContext != nullptr);
     assert(firstReusableContext->ucontext == newlyCreatedContext);
@@ -427,9 +437,11 @@ void Dispatcher::contextProcedure(void* ucontext) {
   context.next = nullptr;
   firstReusableContext = &context;
   ucontext_t* oldContext = static_cast<ucontext_t*>(context.ucontext);
+  #ifdef __GLIBC__
   if (swapcontext(oldContext, static_cast<ucontext_t*>(currentContext->ucontext)) == -1) {
     throw std::runtime_error("Dispatcher::contextProcedure, swapcontext failed, " + lastErrorMessage());
   }
+  #endif
 
   for (;;) {
     ++runningContextCount;
