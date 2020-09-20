@@ -6,7 +6,9 @@
 
 #pragma once
 
+#ifdef __linux__
 #include <sys/select.h>
+#endif
 
 #include <atomic>
 #include <functional>
