@@ -15,14 +15,9 @@ jobs:
       - name: Build
         id: build
         run: |
-          sudo fallocate -l 6G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-          BOOST_ROOT=
           sudo apt-get purge '*boost*'
           sudo apt install -y libboost-all-dev
-          build_folder="build/debug"
+          build_folder="build/release"
           ccx_ver=$(echo "$GITHUB_REF" | sed 's|refs/tags/||')
           ccx_ver_folder=$(echo $ccx_ver | sed 's/\.//g')
           release_name=ccx-cli-ubuntu-2004-v"$ccx_ver"
