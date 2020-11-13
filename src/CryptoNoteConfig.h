@@ -107,7 +107,7 @@ namespace CryptoNote
 		const uint64_t UPGRADE_HEIGHT_V5 = 98160;	  /* Deposits 2.0, Investments 1.0 */
 		const uint64_t UPGRADE_HEIGHT_V6 = 104200;	  /* LWMA3 */
 		const uint64_t UPGRADE_HEIGHT_V7 = 195765;	  /* Cryptoight Conceal */
-		const uint64_t UPGRADE_HEIGHT_V8 = 1500000;	  /* LWMA1 */
+		const uint64_t UPGRADE_HEIGHT_V8 = 636060;	  /* Halving, CN-GPU, LWMA1 */
 		const unsigned UPGRADE_VOTING_THRESHOLD = 90; // percent
 		const size_t UPGRADE_VOTING_WINDOW = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
 		const size_t UPGRADE_WINDOW = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
@@ -130,7 +130,8 @@ namespace CryptoNote
 	const uint64_t MAX_BLOCK_REWARD = (UINT64_C(15) * parameters::COIN);	   // max reward (Consensus I)
 	const uint64_t REWARD_INCREASE_INTERVAL = (UINT64_C(21900));			   // aprox. 1 month (+ 0.25 CCX increment per month)
 
-	const char CRYPTONOTE_NAME[] = "conceal";
+
+	const char CRYPTONOTE_NAME[] = "concealtestnet";
 	const char GENESIS_COINBASE_TX_HEX[] = "010a01ff0001c096b102029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017d6775185749e95ac2d70cae3f29e0e46f430ab648abbe9fdc61d8e7437c60f8";
 	const uint32_t GENESIS_NONCE = 10000;
 	const uint64_t GENESIS_TIMESTAMP = 1527078920;
@@ -150,8 +151,8 @@ namespace CryptoNote
 	const size_t BLOCKS_SYNCHRONIZING_DEFAULT_COUNT = 128;		 // by default, blocks count in blocks downloading
 	const size_t COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT = 1000;
 
-	const int P2P_DEFAULT_PORT = 15000;
-	const int RPC_DEFAULT_PORT = 16000;
+	const int P2P_DEFAULT_PORT = 25000;
+	const int RPC_DEFAULT_PORT = 26000;
 
 	/* P2P Network Configuration Section - This defines our current P2P network version
 and the minimum version for communication between nodes */
@@ -177,10 +178,9 @@ and the minimum version for communication between nodes */
 
 	// Seed Nodes
 	const std::initializer_list<const char *> SEED_NODES = {
-		"212.237.59.97:15000",	 // Gamma
-		"188.213.165.210:15000", // Omega
-		"89.40.118.85:15000",	 // Delta
-		"94.177.245.107:15000"	 // Lambda
+		"144.91.76.173:25000",
+		"213.136.71.144:25000"
+
 	};
 
 	struct CheckpointData
