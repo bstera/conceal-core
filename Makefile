@@ -17,7 +17,7 @@ cmake-release:
 	cd build/release && cmake ../..
 
 build-release: cmake-release
-	cd build/release && $(MAKE) -j4
+	cd build/release && $(MAKE) 
 
 build-static: 
 	mkdir -p build/static
