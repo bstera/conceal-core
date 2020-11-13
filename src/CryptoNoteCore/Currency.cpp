@@ -178,6 +178,10 @@ namespace CryptoNote
 
   uint64_t Currency::baseRewardFunction(uint64_t alreadyGeneratedCoins, uint32_t height) const
   {
+
+    uint64_t incrIntervals = static_cast<uint64_t>(height) / REWARD_INCREASE_INTERVAL;
+    assert(incrIntervals < REWARD_INCREASING_FACTOR.size());
+
     if (height == 1)
     {
       return FOUNDATION_TRUST;
@@ -185,15 +189,15 @@ namespace CryptoNote
 
     uint64_t base_reward = 0;
 
-    if (height > CryptoNote::parameters::UPGRADE_HEIGHT_V8) {
+    if (height > CryptoNote::parameters::UPGRADE_HEIGHT_V8)
+    {
       base_reward = 6;
-    } else {
+    }
+    else
+    {
       base_reward = START_BLOCK_REWARD + REWARD_INCREASING_FACTOR[incrIntervals];
     }
 
-    uint64_t incrIntervals = static_cast<uint64_t>(height) / REWARD_INCREASE_INTERVAL;
-    assert(incrIntervals < REWARD_INCREASING_FACTOR.size());
-    
     base_reward = (std::min)(base_reward, MAX_BLOCK_REWARD);
     base_reward = (std::min)(base_reward, m_moneySupply - alreadyGeneratedCoins);
 
