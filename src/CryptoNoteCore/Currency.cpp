@@ -191,7 +191,7 @@ namespace CryptoNote
 
     if (height > CryptoNote::parameters::UPGRADE_HEIGHT_V8)
     {
-      base_reward = 6000000;
+      base_reward = CryptoNote::parameters::MAX_BLOCK_REWARD_V1;
     }
     else
     {
