@@ -882,11 +882,6 @@ namespace CryptoNote
     uint64_t block_index = m_blocks.size();
     uint8_t block_major_version = get_block_major_version_for_height(block_index + 1);
 
-    if ((block_index >= 636039) && (block_index < 636100)) {
-      return 200;
-    }
-
-
     if (block_major_version >= 8)
     {
       return m_currency.nextDifficultyLWMA1(timestamps, commulative_difficulties, block_index);
