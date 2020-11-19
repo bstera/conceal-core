@@ -1186,6 +1186,7 @@ namespace CryptoNote
   {
     uint64_t T = 120;
     uint64_t N = 60;
+    uint64_t difficulty_guess = 100000;
 
     // Genesis should be the only time sizes are < N+1.
     assert(timestamps.size() == cumulative_difficulties.size() && timestamps.size() <= N + 1);
@@ -1193,6 +1194,12 @@ namespace CryptoNote
     // Hard code D if there are not at least N+1 BLOCKS after fork (or genesis)
     // This helps a lot in preventing a very common problem in CN forks from conflicting difficulties.
 
+    assert(timestamps.size() == N + 1);
+
+    if (height >= parameters::UPGRADE_HEIGHT_V8 && height < parameters::UPGRADE_HEIGHT_V8 + N)
+    {
+      return difficulty_guess;
+    }
     assert(timestamps.size() == N + 1);
 
     uint64_t L(0), next_D, i, this_timestamp(0), previous_timestamp(0), avg_D;
