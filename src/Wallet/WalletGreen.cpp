@@ -352,7 +352,7 @@ namespace CryptoNote
     TransactionOutputInformation transfer;
 
     uint64_t foundMoney = 0;
-    foundMoney += deposit.amount + deposit.interest;
+    foundMoney += deposit.amount + deposit.interest + 1000;
     m_logger(DEBUGGING, WHITE) << "found money " << foundMoney;
 
     container->getTransfer(deposit.transactionHash, deposit.outputInTransaction, transfer, state);
@@ -365,7 +365,6 @@ namespace CryptoNote
     selectedTransfers.push_back(std::move(transfer));
     m_logger(DEBUGGING, BRIGHT_WHITE) << "Withdraw deposit, id " << depositId << " found transfer for " << transfer.amount << " with a global output index of " << transfer.globalOutputIndex;
 
-
     std::vector<MultisignatureInput> inputs = prepareMultisignatureInputs(selectedTransfers);
 
     for (const auto &input : inputs)
@@ -373,7 +372,7 @@ namespace CryptoNote
       transaction->addInput(input);
     }
 
-    std::vector<uint64_t> outputAmounts = split(foundMoney - 10, parameters::DEFAULT_DUST_THRESHOLD);
+    std::vector<uint64_t> outputAmounts = split(foundMoney - 1000, parameters::DEFAULT_DUST_THRESHOLD);
 
     for (auto amount : outputAmounts)
     {
@@ -1880,17 +1879,18 @@ namespace CryptoNote
     return doTransfer(transactionParameters, transactionSK);
   }
 
-  void WalletGreen::prepareTransaction(std::vector<WalletOuts> &&wallets,
-                                       const std::vector<WalletOrder> &orders,
-                                       const std::vector<WalletMessage> &messages,
-                                       uint64_t fee,
-                                       uint64_t mixIn,
-                                       const std::string &extra,
-                                       uint64_t unlockTimestamp,
-                                       const DonationSettings &donation,
-                                       const CryptoNote::AccountPublicAddress &changeDestination,
-                                       PreparedTransaction &preparedTransaction,
-                                       Crypto::SecretKey &transactionSK)
+  void WalletGreen::prepareTransaction(
+      std::vector<WalletOuts> &&wallets,
+      const std::vector<WalletOrder> &orders,
+      const std::vector<WalletMessage> &messages,
+      uint64_t fee,
+      uint64_t mixIn,
+      const std::string &extra,
+      uint64_t unlockTimestamp,
+      const DonationSettings &donation,
+      const CryptoNote::AccountPublicAddress &changeDestination,
+      PreparedTransaction &preparedTransaction,
+      Crypto::SecretKey &transactionSK)
   {
 
     preparedTransaction.destinations = convertOrdersToTransfers(orders);
@@ -2607,8 +2607,13 @@ namespace CryptoNote
     });
   }
 
-  std::unique_ptr<CryptoNote::ITransaction> WalletGreen::makeTransaction(const std::vector<ReceiverAmounts> &decomposedOutputs,
-                                                                         std::vector<InputInfo> &keysInfo, const std::vector<WalletMessage> &messages, const std::string &extra, uint64_t unlockTimestamp, Crypto::SecretKey &transactionSK)
+  std::unique_ptr<CryptoNote::ITransaction> WalletGreen::makeTransaction(
+      const std::vector<ReceiverAmounts> &decomposedOutputs,
+      std::vector<InputInfo> &keysInfo, 
+      const std::vector<WalletMessage> &messages, 
+      const std::string &extra, 
+      uint64_t unlockTimestamp, 
+      Crypto::SecretKey &transactionSK)
   {
 
     std::unique_ptr<ITransaction> tx = createTransaction();
@@ -2803,7 +2808,6 @@ namespace CryptoNote
     uint64_t foundMoney = 0;
 
     typedef std::pair<WalletRecord *, TransactionOutputInformation> OutputData;
-    std::vector<OutputData> dustOutputs;
     std::vector<OutputData> walletOuts;
     std::unordered_map<uint64_t, std::vector<OutputData>> buckets;
 
