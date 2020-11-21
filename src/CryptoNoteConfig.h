@@ -179,8 +179,8 @@ and the minimum version for communication between nodes */
 
 	// Seed Nodes
 	const std::initializer_list<const char *> SEED_NODES = {
-		"144.91.76.173:25000",
-		"213.136.71.144:25000"
+		"144.91.76.173:24000",
+		"213.136.71.144:24000"
 
 	};
 
