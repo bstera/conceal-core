@@ -152,7 +152,7 @@ namespace CryptoNote
 	const size_t BLOCKS_SYNCHRONIZING_DEFAULT_COUNT = 128;		 // by default, blocks count in blocks downloading
 	const size_t COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT = 1000;
 
-	const int P2P_DEFAULT_PORT = 25000;
+	const int P2P_DEFAULT_PORT = 24000;
 	const int RPC_DEFAULT_PORT = 26000;
 
 	/* P2P Network Configuration Section - This defines our current P2P network version
