@@ -1186,7 +1186,7 @@ namespace CryptoNote
   {
     uint64_t T = 120;
     uint64_t N = 60;
-    uint64_t difficulty_guess = 100000;
+    uint64_t difficulty_guess = 800;
 
     // Genesis should be the only time sizes are < N+1.
     assert(timestamps.size() == cumulative_difficulties.size() && timestamps.size() <= N + 1);
