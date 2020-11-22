@@ -1186,7 +1186,7 @@ namespace CryptoNote
   {
     uint64_t T = 120;
     uint64_t N = 60;
-    uint64_t difficulty_guess = 800;
+    uint64_t difficulty_guess = 200;
 
     // Genesis should be the only time sizes are < N+1.
     assert(timestamps.size() == cumulative_difficulties.size() && timestamps.size() <= N + 1);
@@ -1196,7 +1196,7 @@ namespace CryptoNote
 
     assert(timestamps.size() == N + 1);
 
-    if (height >= parameters::UPGRADE_HEIGHT_V8 && height < parameters::UPGRADE_HEIGHT_V8 + N)
+    if (height >= parameters::UPGRADE_HEIGHT_V8 && height < parameters::UPGRADE_HEIGHT_V8 + 120)
     {
       return difficulty_guess;
     }
