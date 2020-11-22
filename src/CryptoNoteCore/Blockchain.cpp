@@ -2138,12 +2138,6 @@ namespace CryptoNote
       return false;
     }
 
-    if ((getCurrentBlockchainHeight() > CryptoNote::parameters::UPGRADE_HEIGHT_V8) && (txin.outputIndexes.size() < 3))
-    {
-      logger(ERROR, BRIGHT_RED) << "ring size is too small: " << txin.outputIndexes.size() << " Expected: 4";
-      return false;
-    }
-
     if (getCurrentBlockchainHeight() > CryptoNote::parameters::UPGRADE_HEIGHT_V4 && getCurrentBlockchainHeight() < CryptoNote::parameters::UPGRADE_HEIGHT_V5 && txin.outputIndexes.size() < 3)
     {
       logger(ERROR, BRIGHT_RED) << "ring size is too small: " << txin.outputIndexes.size() << " Expected: 4";
