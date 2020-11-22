@@ -127,14 +127,16 @@ namespace CryptoNote
       return false;
     }
 
+    bool isWithdrawalTransaction = false;
+
     for (const auto &in : tx.inputs)
     {
       const auto &inputType = in.type();
       if (inputType == typeid(MultisignatureInput))
       {
         logger(INFO, WHITE) << "multisig input";
+        isWithdrawalTransaction = true;
       }
-
     }
 
     uint64_t inputs_amount = m_currency.getTransactionAllInputsAmount(tx, height);
@@ -274,7 +276,7 @@ namespace CryptoNote
     }
 
     tvc.m_added_to_pool = true;
-    tvc.m_should_be_relayed = inputsValid && (fee > 0 || isFusionTransaction || ttl.ttl != 0);
+    tvc.m_should_be_relayed = inputsValid && (fee == 1000 || isFusionTransaction || isWithdrawalTransaction || ttl.ttl != 0);
     tvc.m_verification_failed = true;
 
     if (!addTransactionInputs(id, tx, keptByBlock))
