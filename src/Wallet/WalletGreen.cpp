@@ -352,7 +352,7 @@ namespace CryptoNote
     TransactionOutputInformation transfer;
 
     uint64_t foundMoney = 0;
-    foundMoney += deposit.amount + deposit.interest;
+    foundMoney += deposit.amount + deposit.interest + 1000;
     m_logger(DEBUGGING, WHITE) << "found money " << foundMoney;
 
     container->getTransfer(deposit.transactionHash, deposit.outputInTransaction, transfer, state);
@@ -372,7 +372,7 @@ namespace CryptoNote
       transaction->addInput(input);
     }
 
-    std::vector<uint64_t> outputAmounts = split(foundMoney - 10, parameters::DEFAULT_DUST_THRESHOLD);
+    std::vector<uint64_t> outputAmounts = split(foundMoney - 1000, parameters::DEFAULT_DUST_THRESHOLD);
 
     for (auto amount : outputAmounts)
     {
