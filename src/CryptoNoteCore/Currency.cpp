@@ -1196,7 +1196,7 @@ namespace CryptoNote
 
     assert(timestamps.size() == N + 1);
 
-    if (height >= parameters::UPGRADE_HEIGHT_V8 && height < parameters::UPGRADE_HEIGHT_V8 + 120)
+    if (height >= parameters::UPGRADE_HEIGHT_V8 && height < parameters::UPGRADE_HEIGHT_V8 + 240)
     {
       return difficulty_guess;
     }
