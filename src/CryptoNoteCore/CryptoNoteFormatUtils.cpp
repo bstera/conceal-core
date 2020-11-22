@@ -260,7 +260,9 @@ bool check_inputs_types_supported(const TransactionPrefix& tx) {
   for (const auto& in : tx.inputs) {
     const auto& inputType = in.type();
     if (inputType == typeid(MultisignatureInput)) {
+      logger(INFO, BRIGHT_YELLOW) << "input is multisig ";
       if (tx.version < TRANSACTION_VERSION_2) {
+        logger(INFO, BRIGHT_YELLOW) << "less than version 2 ";
         return false;
       }
     } else if (in.type() != typeid(KeyInput) && in.type() != typeid(MultisignatureInput)) {
