@@ -127,6 +127,16 @@ namespace CryptoNote
       return false;
     }
 
+    for (const auto &in : tx.inputs)
+    {
+      const auto &inputType = in.type();
+      if (inputType == typeid(MultisignatureInput))
+      {
+        logger(INFO, WHITE) << "multisig input";
+      }
+
+    }
+
     uint64_t inputs_amount = m_currency.getTransactionAllInputsAmount(tx, height);
     uint64_t outputs_amount = get_outs_money_amount(tx);
 
