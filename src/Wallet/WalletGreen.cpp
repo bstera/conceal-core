@@ -352,7 +352,7 @@ namespace CryptoNote
     TransactionOutputInformation transfer;
 
     uint64_t foundMoney = 0;
-    foundMoney += deposit.amount + deposit.interest + 1000;
+    foundMoney += deposit.amount + deposit.interest;
     m_logger(DEBUGGING, WHITE) << "found money " << foundMoney;
 
     container->getTransfer(deposit.transactionHash, deposit.outputInTransaction, transfer, state);
