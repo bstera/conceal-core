@@ -144,7 +144,7 @@ namespace CryptoNote
 	const uint8_t BLOCK_MAJOR_VERSION_3 = 3; // (Consensus III)
 	const uint8_t BLOCK_MAJOR_VERSION_4 = 4; // LWMA3
 	const uint8_t BLOCK_MAJOR_VERSION_7 = 7; /* Cryptonight Conceal */
-	const uint8_t BLOCK_MAJOR_VERSION_8 = 8; /* LWMA1 */
+	const uint8_t BLOCK_MAJOR_VERSION_8 = 8; /* LWMA1, CN-GPU, Halving */
 	const uint8_t BLOCK_MINOR_VERSION_0 = 0;
 	const uint8_t BLOCK_MINOR_VERSION_1 = 1;
 
@@ -261,7 +261,11 @@ and the minimum version for communication between nodes */
 			{570000, "9efe8868099afd1f6b17de773da0f5baebf2ace666bf5e599188c64d27cd429f"},
 			{580000, "39ecee8d292c4e0440467b28ead6ed96c480ac85bec4fdba1e4c14b49b08077e"},
 			{590000, "d6201b072cfed013b0e1091517624ca72bdd1ef147143356a1f951dd3241dd88"},
-			{600000, "9f87dd161e37e9dbbcd86a3fafe8e1dec8c54194251ca0c36c646173db12c115"}
+			{600000, "9f87dd161e37e9dbbcd86a3fafe8e1dec8c54194251ca0c36c646173db12c115"},
+			{610000, "9c95678a27c5bde2b53efdae5c20a5528f134c4ff75737dee3e3d63b4d79c7ba"},
+			{620000, "e5de278b0ea676855873663a32a2d21bc6d98cffcb133e249c8219fb0fcdc3eb"},
+			{630000, "762c8269af35d53408d806d453b8ca6f19fc9e83048bb8d985502344f1d5e08a"},
+			{640000, "24e1ac8aff3e1e7850c06a377c68b2ea3afe53477b710b988b6b456383a50081"}
 
 	};
 
