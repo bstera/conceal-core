@@ -2607,8 +2607,13 @@ namespace CryptoNote
     });
   }
 
-  std::unique_ptr<CryptoNote::ITransaction> WalletGreen::makeTransaction(const std::vector<ReceiverAmounts> &decomposedOutputs,
-                                                                         std::vector<InputInfo> &keysInfo, const std::vector<WalletMessage> &messages, const std::string &extra, uint64_t unlockTimestamp, Crypto::SecretKey &transactionSK)
+  std::unique_ptr<CryptoNote::ITransaction> WalletGreen::makeTransaction(
+      const std::vector<ReceiverAmounts> &decomposedOutputs,
+      std::vector<InputInfo> &keysInfo, 
+      const std::vector<WalletMessage> &messages, 
+      const std::string &extra, 
+      uint64_t unlockTimestamp, 
+      Crypto::SecretKey &transactionSK)
   {
 
     std::unique_ptr<ITransaction> tx = createTransaction();

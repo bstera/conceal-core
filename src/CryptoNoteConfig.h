@@ -152,7 +152,7 @@ namespace CryptoNote
 	const size_t BLOCKS_SYNCHRONIZING_DEFAULT_COUNT = 128;		 // by default, blocks count in blocks downloading
 	const size_t COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT = 1000;
 
-	const int P2P_DEFAULT_PORT = 25000;
+	const int P2P_DEFAULT_PORT = 24000;
 	const int RPC_DEFAULT_PORT = 26000;
 
 	/* P2P Network Configuration Section - This defines our current P2P network version
@@ -179,8 +179,8 @@ and the minimum version for communication between nodes */
 
 	// Seed Nodes
 	const std::initializer_list<const char *> SEED_NODES = {
-		"144.91.76.173:25000",
-		"213.136.71.144:25000"
+		"144.91.76.173:24000",
+		"213.136.71.144:24000"
 
 	};
 

@@ -882,11 +882,6 @@ namespace CryptoNote
     uint64_t block_index = m_blocks.size();
     uint8_t block_major_version = get_block_major_version_for_height(block_index + 1);
 
-    if ((block_index >= 636039) && (block_index < 636100)) {
-      return 200;
-    }
-
-
     if (block_major_version >= 8)
     {
       return m_currency.nextDifficultyLWMA1(timestamps, commulative_difficulties, block_index);
@@ -2132,12 +2127,6 @@ namespace CryptoNote
     if (txin.outputIndexes.size() != output_keys.size())
     {
       logger(INFO, BRIGHT_WHITE) << "Output keys for tx with amount = " << txin.amount << " and count indexes " << txin.outputIndexes.size() << " returned wrong keys count " << output_keys.size();
-      return false;
-    }
-
-    if ((getCurrentBlockchainHeight() > CryptoNote::parameters::UPGRADE_HEIGHT_V8) && (txin.outputIndexes.size() < 3))
-    {
-      logger(ERROR, BRIGHT_RED) << "ring size is too small: " << txin.outputIndexes.size() << " Expected: 4";
       return false;
     }
 

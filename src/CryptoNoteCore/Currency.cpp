@@ -513,10 +513,9 @@ namespace CryptoNote
     if (amount_out > amount_in)
     {
       // interest shows up in the output of the W/D transactions and W/Ds always have min fee
-      if (tx.inputs.size() > 0 && tx.outputs.size() > 0 && amount_out > amount_in + parameters::MINIMUM_FEE)
+      if (tx.inputs.size() > 0 && tx.outputs.size() > 0 && amount_out > amount_in + parameters::MINIMUM_FEE_V2)
       {
-        fee = parameters::MINIMUM_FEE;
-        logger(INFO) << "TRIGGERED: Currency.cpp getTransactionFee";
+        fee = parameters::MINIMUM_FEE_V2;
       }
       else
       {
