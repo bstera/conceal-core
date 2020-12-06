@@ -131,7 +131,7 @@ namespace CryptoNote
 	const uint64_t MAX_BLOCK_REWARD_V1 = (UINT64_C(6) * parameters::COIN);
 	const uint64_t REWARD_INCREASE_INTERVAL = (UINT64_C(21900));			   // aprox. 1 month (+ 0.25 CCX increment per month)
 
-	const char CRYPTONOTE_NAME[] = "conceal";
+	const char CRYPTONOTE_NAME[] = "concealstagenet";
 	const char GENESIS_COINBASE_TX_HEX[] = "010a01ff0001c096b102029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017d6775185749e95ac2d70cae3f29e0e46f430ab648abbe9fdc61d8e7437c60f8";
 	const uint32_t GENESIS_NONCE = 10000;
 	const uint64_t GENESIS_TIMESTAMP = 1527078920;
@@ -151,8 +151,8 @@ namespace CryptoNote
 	const size_t BLOCKS_SYNCHRONIZING_DEFAULT_COUNT = 128;		 // by default, blocks count in blocks downloading
 	const size_t COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT = 1000;
 
-	const int P2P_DEFAULT_PORT = 15000;
-	const int RPC_DEFAULT_PORT = 16000;
+	const int P2P_DEFAULT_PORT = 55000;
+	const int RPC_DEFAULT_PORT = 56000;
 
 	/* P2P Network Configuration Section - This defines our current P2P network version
 and the minimum version for communication between nodes */
@@ -178,9 +178,8 @@ and the minimum version for communication between nodes */
 
 	// Seed Nodes
 	const std::initializer_list<const char *> SEED_NODES = {
-		"188.213.165.210:15000", // Omega
-		"89.40.118.85:15000",	 // Delta
-		"94.177.245.107:15000"	 // Lambda
+		"161.97.145.65:55000",
+		"161.97.145.65:55001",
 	};
 
 	struct CheckpointData
@@ -200,7 +199,8 @@ and the minimum version for communication between nodes */
 			{0, "850ac16022f4dddab624fad3f9049dba80592c8ea51a5dff19fefeb386e536b1"},
 			{100, "cc259d1bab12abbd8704d4bfab69e2998cfa0f4f1aab37936ef01903a8e8ad45"},
 			{200, "67ff1912b28bf9107a3c3586b76af863b592ccf15efec297406d56bfb1f757d7"},
-			{300, "fc40e9f29ae1cb3feff414070a20f5e79486645385d185448142302609b08199"}
+			{300, "fc40e9f29ae1cb3feff414070a20f5e79486645385d185448142302609b08199"},
+			{400, "35c7c956ab1666f9af882262a7c9fa5de403ddce18011d164bd292d46767357f"}
 		};
 } // namespace CryptoNote
 
