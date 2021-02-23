@@ -5,23 +5,24 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "TransactionExtra.h"
-#include "crypto/chacha8.h"
-#include "Common/int-util.h"
+
 #include "Common/MemoryInputStream.h"
 #include "Common/StreamTools.h"
 #include "Common/StringTools.h"
 #include "Common/Varint.h"
+#include "Common/int-util.h"
 #include "CryptoNoteTools.h"
-#include "Serialization/BinaryOutputStreamSerializer.h"
 #include "Serialization/BinaryInputStreamSerializer.h"
+#include "Serialization/BinaryOutputStreamSerializer.h"
+#include "crypto/chacha8.h"
 
 using namespace Crypto;
 using namespace Common;
 
 namespace CryptoNote
 {
-
-  bool parseTransactionExtra(const std::vector<uint8_t> &transactionExtra, std::vector<TransactionExtraField> &transactionExtraFields)
+  bool parseTransactionExtra(const std::vector<uint8_t> &transactionExtra,
+                             std::vector<TransactionExtraField> &transactionExtraFields)
   {
     transactionExtraFields.clear();
 
@@ -40,73 +41,73 @@ namespace CryptoNote
         c = read<uint8_t>(iss);
         switch (c)
         {
-        case TX_EXTRA_TAG_PADDING:
-        {
-          size_t size = 1;
-          for (; !iss.endOfStream() && size <= TX_EXTRA_PADDING_MAX_COUNT; ++size)
+          case TX_EXTRA_TAG_PADDING:
           {
-            if (read<uint8_t>(iss) != 0)
+            size_t size = 1;
+            for (; !iss.endOfStream() && size <= TX_EXTRA_PADDING_MAX_COUNT; ++size)
             {
-              return false; // all bytes should be zero
+              if (read<uint8_t>(iss) != 0)
+              {
+                return false;  // all bytes should be zero
+              }
             }
+
+            if (size > TX_EXTRA_PADDING_MAX_COUNT)
+            {
+              return false;
+            }
+
+            transactionExtraFields.push_back(TransactionExtraPadding{ size });
+            break;
           }
 
-          if (size > TX_EXTRA_PADDING_MAX_COUNT)
+          case TX_EXTRA_TAG_PUBKEY:
           {
-            return false;
+            TransactionExtraPublicKey extraPk;
+            ar(extraPk.publicKey, "public_key");
+            transactionExtraFields.push_back(extraPk);
+            break;
           }
 
-          transactionExtraFields.push_back(TransactionExtraPadding{size});
-          break;
-        }
-
-        case TX_EXTRA_TAG_PUBKEY:
-        {
-          TransactionExtraPublicKey extraPk;
-          ar(extraPk.publicKey, "public_key");
-          transactionExtraFields.push_back(extraPk);
-          break;
-        }
-
-        case TX_EXTRA_NONCE:
-        {
-          TransactionExtraNonce extraNonce;
-          uint8_t size = read<uint8_t>(iss);
-          if (size > 0)
+          case TX_EXTRA_NONCE:
           {
-            extraNonce.nonce.resize(size);
-            read(iss, extraNonce.nonce.data(), extraNonce.nonce.size());
+            TransactionExtraNonce extraNonce;
+            uint8_t size = read<uint8_t>(iss);
+            if (size > 0)
+            {
+              extraNonce.nonce.resize(size);
+              read(iss, extraNonce.nonce.data(), extraNonce.nonce.size());
+            }
+
+            transactionExtraFields.push_back(extraNonce);
+            break;
           }
 
-          transactionExtraFields.push_back(extraNonce);
-          break;
-        }
+          case TX_EXTRA_MERGE_MINING_TAG:
+          {
+            TransactionExtraMergeMiningTag mmTag;
+            ar(mmTag, "mm_tag");
+            transactionExtraFields.push_back(mmTag);
+            break;
+          }
 
-        case TX_EXTRA_MERGE_MINING_TAG:
-        {
-          TransactionExtraMergeMiningTag mmTag;
-          ar(mmTag, "mm_tag");
-          transactionExtraFields.push_back(mmTag);
-          break;
-        }
+          case TX_EXTRA_MESSAGE_TAG:
+          {
+            tx_extra_message message;
+            ar(message.data, "message");
+            transactionExtraFields.push_back(message);
+            break;
+          }
 
-        case TX_EXTRA_MESSAGE_TAG:
-        {
-          tx_extra_message message;
-          ar(message.data, "message");
-          transactionExtraFields.push_back(message);
-          break;
-        }
-
-        case TX_EXTRA_TTL:
-        {
-          uint8_t size;
-          readVarint(iss, size);
-          TransactionExtraTTL ttl;
-          readVarint(iss, ttl.ttl);
-          transactionExtraFields.push_back(ttl);
-          break;
-        }
+          case TX_EXTRA_TTL:
+          {
+            uint8_t size;
+            readVarint(iss, size);
+            TransactionExtraTTL ttl;
+            readVarint(iss, ttl.ttl);
+            transactionExtraFields.push_back(ttl);
+            break;
+          }
         }
       }
     }
@@ -122,8 +123,7 @@ namespace CryptoNote
   {
     std::vector<uint8_t> &extra;
 
-    ExtraSerializerVisitor(std::vector<uint8_t> &tx_extra)
-        : extra(tx_extra) {}
+    ExtraSerializerVisitor(std::vector<uint8_t> &tx_extra) : extra(tx_extra) { }
 
     bool operator()(const TransactionExtraPadding &t)
     {
@@ -150,10 +150,7 @@ namespace CryptoNote
       return appendMergeMiningTagToExtra(extra, t);
     }
 
-    bool operator()(const tx_extra_message &t)
-    {
-      return append_message_to_extra(extra, t);
-    }
+    bool operator()(const tx_extra_message &t) { return append_message_to_extra(extra, t); }
 
     bool operator()(const TransactionExtraTTL &t)
     {
@@ -162,7 +159,8 @@ namespace CryptoNote
     }
   };
 
-  bool writeTransactionExtra(std::vector<uint8_t> &tx_extra, const std::vector<TransactionExtraField> &tx_extra_fields)
+  bool writeTransactionExtra(std::vector<uint8_t> &tx_extra,
+                             const std::vector<TransactionExtraField> &tx_extra_fields)
   {
     ExtraSerializerVisitor visitor(tx_extra);
 
@@ -197,7 +195,8 @@ namespace CryptoNote
     return true;
   }
 
-  bool addExtraNonceToTransactionExtra(std::vector<uint8_t> &tx_extra, const BinaryArray &extra_nonce)
+  bool addExtraNonceToTransactionExtra(std::vector<uint8_t> &tx_extra,
+                                       const BinaryArray &extra_nonce)
   {
     if (extra_nonce.size() > TX_EXTRA_NONCE_MAX_COUNT)
     {
@@ -206,18 +205,19 @@ namespace CryptoNote
 
     size_t start_pos = tx_extra.size();
     tx_extra.resize(tx_extra.size() + 2 + extra_nonce.size());
-    //write tag
+    // write tag
     tx_extra[start_pos] = TX_EXTRA_NONCE;
-    //write len
+    // write len
     ++start_pos;
     tx_extra[start_pos] = static_cast<uint8_t>(extra_nonce.size());
-    //write data
+    // write data
     ++start_pos;
     memcpy(&tx_extra[start_pos], extra_nonce.data(), extra_nonce.size());
     return true;
   }
 
-  bool appendMergeMiningTagToExtra(std::vector<uint8_t> &tx_extra, const TransactionExtraMergeMiningTag &mm_tag)
+  bool appendMergeMiningTagToExtra(std::vector<uint8_t> &tx_extra,
+                                   const TransactionExtraMergeMiningTag &mm_tag)
   {
     BinaryArray blob;
     if (!toBinaryArray(mm_tag, blob))
@@ -226,11 +226,14 @@ namespace CryptoNote
     }
 
     tx_extra.push_back(TX_EXTRA_MERGE_MINING_TAG);
-    std::copy(reinterpret_cast<const uint8_t *>(blob.data()), reinterpret_cast<const uint8_t *>(blob.data() + blob.size()), std::back_inserter(tx_extra));
+    std::copy(reinterpret_cast<const uint8_t *>(blob.data()),
+              reinterpret_cast<const uint8_t *>(blob.data() + blob.size()),
+              std::back_inserter(tx_extra));
     return true;
   }
 
-  bool getMergeMiningTagFromExtra(const std::vector<uint8_t> &tx_extra, TransactionExtraMergeMiningTag &mm_tag)
+  bool getMergeMiningTagFromExtra(const std::vector<uint8_t> &tx_extra,
+                                  TransactionExtraMergeMiningTag &mm_tag)
   {
     std::vector<TransactionExtraField> tx_extra_fields;
     parseTransactionExtra(tx_extra, tx_extra_fields);
@@ -248,12 +251,16 @@ namespace CryptoNote
 
     tx_extra.reserve(tx_extra.size() + 1 + blob.size());
     tx_extra.push_back(TX_EXTRA_MESSAGE_TAG);
-    std::copy(reinterpret_cast<const uint8_t *>(blob.data()), reinterpret_cast<const uint8_t *>(blob.data() + blob.size()), std::back_inserter(tx_extra));
+    std::copy(reinterpret_cast<const uint8_t *>(blob.data()),
+              reinterpret_cast<const uint8_t *>(blob.data() + blob.size()),
+              std::back_inserter(tx_extra));
 
     return true;
   }
 
-  std::vector<std::string> get_messages_from_extra(const std::vector<uint8_t> &extra, const Crypto::PublicKey &txkey, const Crypto::SecretKey *recepient_secret_key)
+  std::vector<std::string> get_messages_from_extra(const std::vector<uint8_t> &extra,
+                                                   const Crypto::PublicKey &txkey,
+                                                   const Crypto::SecretKey *recepient_secret_key)
   {
     std::vector<TransactionExtraField> tx_extra_fields;
     std::vector<std::string> result;
@@ -289,7 +296,8 @@ namespace CryptoNote
     std::copy(ttlData.begin(), ttlData.end(), std::back_inserter(tx_extra));
   }
 
-  void setPaymentIdToTransactionExtraNonce(std::vector<uint8_t> &extra_nonce, const Hash &payment_id)
+  void setPaymentIdToTransactionExtraNonce(std::vector<uint8_t> &extra_nonce,
+                                           const Hash &payment_id)
   {
     extra_nonce.clear();
     extra_nonce.push_back(TX_EXTRA_NONCE_PAYMENT_ID);
@@ -297,7 +305,8 @@ namespace CryptoNote
     std::copy(payment_id_ptr, payment_id_ptr + sizeof(payment_id), std::back_inserter(extra_nonce));
   }
 
-  bool getPaymentIdFromTransactionExtraNonce(const std::vector<uint8_t> &extra_nonce, Hash &payment_id)
+  bool getPaymentIdFromTransactionExtraNonce(const std::vector<uint8_t> &extra_nonce,
+                                             Hash &payment_id)
   {
     if (sizeof(Hash) + 1 != extra_nonce.size())
       return false;
@@ -367,7 +376,8 @@ namespace CryptoNote
 #pragma pack(pop)
   static_assert(sizeof(message_key_data) == 34, "Invalid structure size");
 
-  bool tx_extra_message::encrypt(size_t index, const std::string &message, const AccountPublicAddress *recipient, const KeyPair &txkey)
+  bool tx_extra_message::encrypt(size_t index, const std::string &message,
+                                 const AccountPublicAddress *recipient, const KeyPair &txkey)
   {
     size_t mlen = message.size();
     std::unique_ptr<char[]> buf(new char[mlen + TX_EXTRA_MESSAGE_CHECKSUM_SIZE]);
@@ -385,13 +395,16 @@ namespace CryptoNote
       key_data.magic2 = 0;
       Hash h = cn_fast_hash(&key_data, sizeof(message_key_data));
       uint64_t nonce = SWAP64LE(index);
-      chacha8(buf.get(), mlen, reinterpret_cast<uint8_t *>(&h), reinterpret_cast<uint8_t *>(&nonce), buf.get());
+      chacha8(buf.get(), mlen, reinterpret_cast<uint8_t *>(&h), reinterpret_cast<uint8_t *>(&nonce),
+              buf.get());
     }
     data.assign(buf.get(), mlen);
     return true;
   }
 
-  bool tx_extra_message::decrypt(size_t index, const Crypto::PublicKey &txkey, const Crypto::SecretKey *recepient_secret_key, std::string &message) const
+  bool tx_extra_message::decrypt(size_t index, const Crypto::PublicKey &txkey,
+                                 const Crypto::SecretKey *recepient_secret_key,
+                                 std::string &message) const
   {
     size_t mlen = data.size();
     if (mlen < TX_EXTRA_MESSAGE_CHECKSUM_SIZE)
@@ -413,7 +426,8 @@ namespace CryptoNote
       key_data.magic2 = 0;
       Hash h = cn_fast_hash(&key_data, sizeof(message_key_data));
       uint64_t nonce = SWAP64LE(index);
-      chacha8(data.data(), mlen, reinterpret_cast<uint8_t *>(&h), reinterpret_cast<uint8_t *>(&nonce), ptr.get());
+      chacha8(data.data(), mlen, reinterpret_cast<uint8_t *>(&h),
+              reinterpret_cast<uint8_t *>(&nonce), ptr.get());
       buf = ptr.get();
     }
     else
@@ -438,4 +452,4 @@ namespace CryptoNote
     return true;
   }
 
-} // namespace CryptoNote
+}  // namespace CryptoNote

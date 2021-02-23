@@ -6,43 +6,46 @@
 
 #pragma once
 
-#include <vector>
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 
-namespace CryptoNote {
-class ISerializer;
+namespace CryptoNote
+{
+  class ISerializer;
 
-class InvestmentIndex {
-public:
-  using DepositAmount = int64_t;
-  using DepositInterest = uint64_t;
-  using DepositHeight = uint32_t;
-  InvestmentIndex();
-  explicit InvestmentIndex(DepositHeight expectedHeight);
-  void pushBlock(DepositAmount amount, DepositInterest interest); 
-  void popBlock(); 
-  void reserve(DepositHeight expectedHeight);
-  size_t popBlocks(DepositHeight from); 
-  DepositAmount investmentAmountAtHeight(DepositHeight height) const;
-  DepositAmount fullDepositAmount() const; 
-  DepositInterest depositInterestAtHeight(DepositHeight height) const;
-  DepositInterest fullInterestAmount() const; 
-  DepositHeight size() const;
-  void serialize(ISerializer& s);
-
-private:
-  struct InvestmentIndexEntry {
-    DepositHeight height;
-    DepositAmount amount;
-    DepositInterest interest;
-
+  class InvestmentIndex
+  {
+   public:
+    using DepositAmount = int64_t;
+    using DepositInterest = uint64_t;
+    using DepositHeight = uint32_t;
+    InvestmentIndex();
+    explicit InvestmentIndex(DepositHeight expectedHeight);
+    void pushBlock(DepositAmount amount, DepositInterest interest);
+    void popBlock();
+    void reserve(DepositHeight expectedHeight);
+    size_t popBlocks(DepositHeight from);
+    DepositAmount investmentAmountAtHeight(DepositHeight height) const;
+    DepositAmount fullDepositAmount() const;
+    DepositInterest depositInterestAtHeight(DepositHeight height) const;
+    DepositInterest fullInterestAmount() const;
+    DepositHeight size() const;
     void serialize(ISerializer& s);
-  };
 
-  using IndexType = std::vector<InvestmentIndexEntry>;
-  IndexType::const_iterator upperBound(DepositHeight height) const;
-  IndexType index;
-  DepositHeight blockCount;
-};
-}
+   private:
+    struct InvestmentIndexEntry
+    {
+      DepositHeight height;
+      DepositAmount amount;
+      DepositInterest interest;
+
+      void serialize(ISerializer& s);
+    };
+
+    using IndexType = std::vector<InvestmentIndexEntry>;
+    IndexType::const_iterator upperBound(DepositHeight height) const;
+    IndexType index;
+    DepositHeight blockCount;
+  };
+}  // namespace CryptoNote

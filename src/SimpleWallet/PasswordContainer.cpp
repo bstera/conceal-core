@@ -6,9 +6,10 @@
 
 #include "PasswordContainer.h"
 
-#include <iostream>
 #include <memory.h>
 #include <stdio.h>
+
+#include <iostream>
 
 #if defined(_WIN32)
 #include <io.h>
@@ -25,27 +26,19 @@ namespace Tools
     bool is_cin_tty();
   }
 
-  PasswordContainer::PasswordContainer()
-    : m_empty(true)
-  {
-  }
+  PasswordContainer::PasswordContainer() : m_empty(true) { }
 
   PasswordContainer::PasswordContainer(std::string&& password)
-    : m_empty(false)
-    , m_password(std::move(password))
+      : m_empty(false), m_password(std::move(password))
   {
   }
 
   PasswordContainer::PasswordContainer(PasswordContainer&& rhs)
-    : m_empty(std::move(rhs.m_empty))
-    , m_password(std::move(rhs.m_password))
+      : m_empty(std::move(rhs.m_empty)), m_password(std::move(rhs.m_password))
   {
   }
 
-  PasswordContainer::~PasswordContainer()
-  {
-    clear();
-  }
+  PasswordContainer::~PasswordContainer() { clear(); }
 
   void PasswordContainer::clear()
   {
@@ -111,11 +104,8 @@ namespace Tools
 
   namespace
   {
-    bool is_cin_tty()
-    {
-      return 0 != _isatty(_fileno(stdin));
-    }
-  }
+    bool is_cin_tty() { return 0 != _isatty(_fileno(stdin)); }
+  }  // namespace
 
   bool PasswordContainer::read_from_tty()
   {
@@ -170,10 +160,7 @@ namespace Tools
 
   namespace
   {
-    bool is_cin_tty()
-    {
-      return 0 != isatty(fileno(stdin));
-    }
+    bool is_cin_tty() { return 0 != isatty(fileno(stdin)); }
 
     int getch()
     {
@@ -191,7 +178,7 @@ namespace Tools
 
       return ch;
     }
-  }
+  }  // namespace
 
   bool PasswordContainer::read_from_tty()
   {
@@ -230,4 +217,4 @@ namespace Tools
   }
 
 #endif
-}
+}  // namespace Tools

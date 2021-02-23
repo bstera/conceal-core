@@ -34,8 +34,8 @@
 #include <x86intrin.h>
 #if !defined(HAS_WIN_INTRIN_API)
 #include <cpuid.h>
-#endif // !defined(HAS_WIN_INTRIN_API)
-#endif // __GNUC__
+#endif  // !defined(HAS_WIN_INTRIN_API)
+#endif  // __GNUC__
 #define HAS_INTEL_HW
 #endif
 

@@ -6,6 +6,7 @@
 
 #include "SwappedMap.h"
 
-namespace {
+namespace
+{
   char suppressMSVCWarningLNK4221;
 }

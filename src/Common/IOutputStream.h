@@ -8,12 +8,13 @@
 
 #include <cstddef>
 
-namespace Common {
+namespace Common
+{
+  class IOutputStream
+  {
+   public:
+    virtual ~IOutputStream() { }
+    virtual size_t writeSome(const void* data, size_t size) = 0;
+  };
 
-class IOutputStream {
-public:
-  virtual ~IOutputStream() { }
-  virtual size_t writeSome(const void* data, size_t size) = 0;
-};
-
-}
+}  // namespace Common

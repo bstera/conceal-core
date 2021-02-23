@@ -6,33 +6,33 @@
 
 #pragma once
 
+#include <Logging/LoggerManager.h>
+#include <Logging/LoggerRef.h>
+
 #include "Common/ConsoleHandler.h"
 
-#include <Logging/LoggerRef.h>
-#include <Logging/LoggerManager.h>
-
-namespace CryptoNote {
-class core;
-class Currency;
-class NodeServer;
-}
+namespace CryptoNote
+{
+  class core;
+  class Currency;
+  class NodeServer;
+}  // namespace CryptoNote
 
 class DaemonCommandsHandler
 {
-public:
-  DaemonCommandsHandler(CryptoNote::core& core, CryptoNote::NodeServer& srv, Logging::LoggerManager& log);
+ public:
+  DaemonCommandsHandler(CryptoNote::core& core, CryptoNote::NodeServer& srv,
+                        Logging::LoggerManager& log);
 
-  bool start_handling() {
+  bool start_handling()
+  {
     m_consoleHandler.start();
     return true;
   }
 
-  void stop_handling() {
-    m_consoleHandler.stop();
-  }
+  void stop_handling() { m_consoleHandler.stop(); }
 
-private:
-
+ private:
   Common::ConsoleHandler m_consoleHandler;
   CryptoNote::core& m_core;
   CryptoNote::NodeServer& m_srv;
@@ -49,8 +49,8 @@ private:
   bool print_pl(const std::vector<std::string>& args);
   bool show_hr(const std::vector<std::string>& args);
   bool hide_hr(const std::vector<std::string>& args);
-  bool rollbackchainto(uint32_t height);  
-  bool rollback_chain(const std::vector<std::string>& args);  
+  bool rollbackchainto(uint32_t height);
+  bool rollback_chain(const std::vector<std::string>& args);
   bool print_bc_outs(const std::vector<std::string>& args);
   bool print_cn(const std::vector<std::string>& args);
   bool print_bc(const std::vector<std::string>& args);
@@ -61,7 +61,7 @@ private:
   bool print_pool(const std::vector<std::string>& args);
   bool print_pool_sh(const std::vector<std::string>& args);
   bool print_stat(const std::vector<std::string>& args);
-  bool save(const std::vector<std::string> &args);
+  bool save(const std::vector<std::string>& args);
 
   bool start_mining(const std::vector<std::string>& args);
   bool stop_mining(const std::vector<std::string>& args);

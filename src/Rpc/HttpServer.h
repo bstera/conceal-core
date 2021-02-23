@@ -16,50 +16,46 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Karbo.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once 
-
-#include <unordered_set>
+#pragma once
 
 #include <HTTP/HttpRequest.h>
 #include <HTTP/HttpResponse.h>
-
+#include <Logging/LoggerRef.h>
 #include <System/ContextGroup.h>
 #include <System/Dispatcher.h>
-#include <System/TcpListener.h>
-#include <System/TcpConnection.h>
 #include <System/Event.h>
+#include <System/TcpConnection.h>
+#include <System/TcpListener.h>
 
-#include <Logging/LoggerRef.h>
+#include <unordered_set>
 
-namespace CryptoNote {
+namespace CryptoNote
+{
+  class HttpServer
+  {
+   public:
+    HttpServer(System::Dispatcher& dispatcher, Logging::ILogger& log);
 
-class HttpServer {
+    void start(const std::string& address, uint16_t port, const std::string& user = "",
+               const std::string& password = "");
+    void stop();
 
-public:
+    virtual void processRequest(const HttpRequest& request, HttpResponse& response) = 0;
+    virtual size_t get_connections_count() const;
 
-  HttpServer(System::Dispatcher& dispatcher, Logging::ILogger& log);
+   protected:
+    System::Dispatcher& m_dispatcher;
 
-  void start(const std::string& address, uint16_t port, const std::string& user = "", const std::string& password = "");
-  void stop();
+   private:
+    void acceptLoop();
+    void connectionHandler(System::TcpConnection&& conn);
+    bool authenticate(const HttpRequest& request) const;
 
-  virtual void processRequest(const HttpRequest& request, HttpResponse& response) = 0;
-  virtual size_t get_connections_count() const;
+    System::ContextGroup workingContextGroup;
+    Logging::LoggerRef logger;
+    System::TcpListener m_listener;
+    std::unordered_set<System::TcpConnection*> m_connections;
+    std::string m_credentials;
+  };
 
-protected:
-
-  System::Dispatcher& m_dispatcher;
-
-private:
-
-  void acceptLoop();
-  void connectionHandler(System::TcpConnection&& conn);
-  bool authenticate(const HttpRequest& request) const;
-
-  System::ContextGroup workingContextGroup;
-  Logging::LoggerRef logger;
-  System::TcpListener m_listener;
-  std::unordered_set<System::TcpConnection*> m_connections;
-  std::string m_credentials;
-};
-
-}
+}  // namespace CryptoNote

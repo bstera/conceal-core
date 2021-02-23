@@ -6,64 +6,78 @@
 
 #pragma once
 
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <cstdint>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <list>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include <vector>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 
-template<class Key, class T> class SwappedMap {
-private:
-  struct Descriptor {
+template<class Key, class T>
+class SwappedMap
+{
+ private:
+  struct Descriptor
+  {
     uint64_t offset;
     uint64_t index;
   };
 
-public:
+ public:
   typedef typename std::pair<Key, T> value_type;
 
-  class const_iterator {
-  public:
-    //typedef ptrdiff_t difference_type;
-    //typedef std::bidirectional_iterator_tag iterator_category;
-    //typedef std::pair<const Key, T>* pointer;
-    //typedef std::pair<const Key, T>& reference;
-    //typedef std::pair<const Key, T> value_type;
+  class const_iterator
+  {
+   public:
+    // typedef ptrdiff_t difference_type;
+    // typedef std::bidirectional_iterator_tag iterator_category;
+    // typedef std::pair<const Key, T>* pointer;
+    // typedef std::pair<const Key, T>& reference;
+    // typedef std::pair<const Key, T> value_type;
 
-    const_iterator(SwappedMap* swappedMap, typename std::unordered_map<Key, Descriptor>::const_iterator descriptorsIterator) : m_swappedMap(swappedMap), m_descriptorsIterator(descriptorsIterator) {
+    const_iterator(SwappedMap* swappedMap,
+                   typename std::unordered_map<Key, Descriptor>::const_iterator descriptorsIterator)
+        : m_swappedMap(swappedMap), m_descriptorsIterator(descriptorsIterator)
+    {
     }
 
-    const_iterator& operator++() {
+    const_iterator& operator++()
+    {
       ++m_descriptorsIterator;
       return *this;
     }
 
-    bool operator !=(const_iterator other) const {
+    bool operator!=(const_iterator other) const
+    {
       return m_descriptorsIterator != other.m_descriptorsIterator;
     }
 
-    bool operator ==(const_iterator other) const {
+    bool operator==(const_iterator other) const
+    {
       return m_descriptorsIterator == other.m_descriptorsIterator;
     }
 
-    const std::pair<const Key, T>& operator*() const {
-      return *m_swappedMap->load(m_descriptorsIterator->first, m_descriptorsIterator->second.offset);
+    const std::pair<const Key, T>& operator*() const
+    {
+      return *m_swappedMap->load(m_descriptorsIterator->first,
+                                 m_descriptorsIterator->second.offset);
     }
 
-    const std::pair<const Key, T>* operator->() const {
+    const std::pair<const Key, T>* operator->() const
+    {
       return m_swappedMap->load(m_descriptorsIterator->first, m_descriptorsIterator->second.offset);
     }
 
-    typename std::unordered_map<Key, Descriptor>::const_iterator innerIterator() const {
+    typename std::unordered_map<Key, Descriptor>::const_iterator innerIterator() const
+    {
       return m_descriptorsIterator;
     }
 
-  private:
+   private:
     SwappedMap* m_swappedMap;
     typename std::unordered_map<Key, Descriptor>::const_iterator m_descriptorsIterator;
   };
@@ -71,9 +85,9 @@ public:
   typedef const_iterator iterator;
 
   SwappedMap();
-  //SwappedMap(const SwappedMap&) = delete;
+  // SwappedMap(const SwappedMap&) = delete;
   ~SwappedMap();
-  //SwappedMap& operator=(const SwappedMap&) = delete;
+  // SwappedMap& operator=(const SwappedMap&) = delete;
 
   bool open(const std::string& itemFileName, const std::string& indexFileName, size_t poolSize);
   void close();
@@ -88,7 +102,7 @@ public:
   void erase(const_iterator iterator);
   std::pair<const_iterator, bool> insert(const std::pair<const Key, T>& value);
 
-private:
+ private:
   std::fstream m_itemsFile;
   std::fstream m_indexesFile;
   size_t m_poolSize;
@@ -105,62 +119,79 @@ private:
   const std::pair<const Key, T>* load(const Key& key, uint64_t offset);
 };
 
-template<class Key, class T> SwappedMap<Key, T>::SwappedMap() {
+template<class Key, class T>
+SwappedMap<Key, T>::SwappedMap()
+{
 }
 
-template<class Key, class T> SwappedMap<Key, T>::~SwappedMap() {
+template<class Key, class T>
+SwappedMap<Key, T>::~SwappedMap()
+{
   close();
 }
 
-template<class Key, class T> bool SwappedMap<Key, T>::open(const std::string& itemFileName, const std::string& indexFileName, size_t poolSize) {
-  if (poolSize == 0) {
+template<class Key, class T>
+bool SwappedMap<Key, T>::open(const std::string& itemFileName, const std::string& indexFileName,
+                              size_t poolSize)
+{
+  if (poolSize == 0)
+  {
     return false;
   }
   descriptorsCounter = 0;
 
   m_itemsFile.open(itemFileName, std::ios::in | std::ios::out | std::ios::binary);
   m_indexesFile.open(indexFileName, std::ios::in | std::ios::out | std::ios::binary);
-  if (m_itemsFile && m_indexesFile) {
+  if (m_itemsFile && m_indexesFile)
+  {
     uint64_t count;
     m_indexesFile.read(reinterpret_cast<char*>(&count), sizeof count);
-    if (!m_indexesFile) {
+    if (!m_indexesFile)
+    {
       return false;
     }
 
     std::unordered_map<Key, Descriptor> descriptors;
     uint64_t itemsFileSize = 0;
-    for (uint64_t i = 0; i < count; ++i) {
+    for (uint64_t i = 0; i < count; ++i)
+    {
       bool valid;
       m_indexesFile.read(reinterpret_cast<char*>(&valid), sizeof valid);
-      if (!m_indexesFile) {
+      if (!m_indexesFile)
+      {
         return false;
       }
 
       Key key;
       m_indexesFile.read(reinterpret_cast<char*>(&key), sizeof key);
-      if (!m_indexesFile) {
+      if (!m_indexesFile)
+      {
         return false;
       }
 
       uint32_t itemSize;
       m_indexesFile.read(reinterpret_cast<char*>(&itemSize), sizeof itemSize);
-      if (!m_indexesFile) {
+      if (!m_indexesFile)
+      {
         if (!m_indexesFile.eof())
-        { //fail it only if the other IO occured
+        {  // fail it only if the other IO occured
           return false;
         }
         else
         {
-          std::cout << "Blockchain indexes file appears to be corrupted. Attempting automatic recovery by rewinding to " << std::to_string(i) << std::endl;
-          m_indexesFile.clear();                                       //clear the error
-          m_indexesFile.seekp(0);                                      //retain compability with C98
-          m_indexesFile.write(reinterpret_cast<char *>(&i), sizeof i); //update the count
-          m_indexesFile.flush();                                       //commit
+          std::cout << "Blockchain indexes file appears to be corrupted. Attempting automatic "
+                       "recovery by rewinding to "
+                    << std::to_string(i) << std::endl;
+          m_indexesFile.clear();   // clear the error
+          m_indexesFile.seekp(0);  // retain compability with C98
+          m_indexesFile.write(reinterpret_cast<char*>(&i), sizeof i);  // update the count
+          m_indexesFile.flush();                                       // commit
           break;
         }
       }
 
-      if (valid) {
+      if (valid)
+      {
         Descriptor descriptor = { itemsFileSize, i };
         descriptors.insert(std::make_pair(key, descriptor));
       }
@@ -170,14 +201,17 @@ template<class Key, class T> bool SwappedMap<Key, T>::open(const std::string& it
 
     m_descriptors.swap(descriptors);
     m_itemsFileSize = itemsFileSize;
-  } else {
+  }
+  else
+  {
     m_itemsFile.open(itemFileName, std::ios::out | std::ios::binary);
     m_itemsFile.close();
     m_itemsFile.open(itemFileName, std::ios::in | std::ios::out | std::ios::binary);
     m_indexesFile.open(indexFileName, std::ios::out | std::ios::binary);
     uint64_t count = 0;
     m_indexesFile.write(reinterpret_cast<char*>(&count), sizeof count);
-    if (!m_indexesFile) {
+    if (!m_indexesFile)
+    {
       return false;
     }
 
@@ -196,39 +230,57 @@ template<class Key, class T> bool SwappedMap<Key, T>::open(const std::string& it
   return true;
 }
 
-template<class Key, class T> void SwappedMap<Key, T>::close() {
-  //std::cout << "SwappedMap cache hits: " << m_cacheHits << ", misses: " << m_cacheMisses << " (" << std::fixed << std::setprecision(2) << static_cast<double>(m_cacheMisses) / (m_cacheHits + m_cacheMisses) * 100 << "%)" << std::endl;
+template<class Key, class T>
+void SwappedMap<Key, T>::close()
+{
+  // std::cout << "SwappedMap cache hits: " << m_cacheHits << ", misses: " << m_cacheMisses << " ("
+  // << std::fixed << std::setprecision(2) << static_cast<double>(m_cacheMisses) / (m_cacheHits +
+  // m_cacheMisses) * 100 << "%)" << std::endl;
 }
 
-template<class Key, class T> uint64_t SwappedMap<Key, T>::size() const {
+template<class Key, class T>
+uint64_t SwappedMap<Key, T>::size() const
+{
   return m_descriptors.size();
 }
 
-template<class Key, class T> typename SwappedMap<Key, T>::const_iterator SwappedMap<Key, T>::begin() {
+template<class Key, class T>
+typename SwappedMap<Key, T>::const_iterator SwappedMap<Key, T>::begin()
+{
   return const_iterator(this, m_descriptors.cbegin());
 }
 
-template<class Key, class T> typename SwappedMap<Key, T>::const_iterator SwappedMap<Key, T>::end() {
+template<class Key, class T>
+typename SwappedMap<Key, T>::const_iterator SwappedMap<Key, T>::end()
+{
   return const_iterator(this, m_descriptors.cend());
 }
 
-template<class Key, class T> size_t SwappedMap<Key, T>::count(const Key& key) const {
+template<class Key, class T>
+size_t SwappedMap<Key, T>::count(const Key& key) const
+{
   return m_descriptors.count(key);
 }
 
-template<class Key, class T> typename SwappedMap<Key, T>::const_iterator SwappedMap<Key, T>::find(const Key& key) {
+template<class Key, class T>
+typename SwappedMap<Key, T>::const_iterator SwappedMap<Key, T>::find(const Key& key)
+{
   return const_iterator(this, m_descriptors.find(key));
 }
 
-template<class Key, class T> void SwappedMap<Key, T>::clear() {
-  if (!m_indexesFile) {
+template<class Key, class T>
+void SwappedMap<Key, T>::clear()
+{
+  if (!m_indexesFile)
+  {
     throw std::runtime_error("SwappedMap::clear");
   }
 
   m_indexesFile.seekp(0);
   uint64_t count = 0;
   m_indexesFile.write(reinterpret_cast<char*>(&count), sizeof count);
-  if (!m_indexesFile) {
+  if (!m_indexesFile)
+  {
     throw std::runtime_error("SwappedMap::clear");
   }
 
@@ -240,41 +292,55 @@ template<class Key, class T> void SwappedMap<Key, T>::clear() {
   descriptorsCounter = 0;
 }
 
-template<class Key, class T> void SwappedMap<Key, T>::erase(const_iterator iterator) {
-  if (!m_indexesFile) {
+template<class Key, class T>
+void SwappedMap<Key, T>::erase(const_iterator iterator)
+{
+  if (!m_indexesFile)
+  {
     throw std::runtime_error("SwappedMap::erase");
   }
 
-  typename std::unordered_map<Key, Descriptor>::const_iterator descriptorsIterator = iterator.innerIterator();
-  m_indexesFile.seekp(sizeof(uint64_t) + (sizeof(bool) + sizeof(Key) + sizeof(uint32_t)) * descriptorsIterator->second.index);
+  typename std::unordered_map<Key, Descriptor>::const_iterator descriptorsIterator =
+      iterator.innerIterator();
+  m_indexesFile.seekp(sizeof(uint64_t) + (sizeof(bool) + sizeof(Key) + sizeof(uint32_t)) *
+                                             descriptorsIterator->second.index);
   bool valid = false;
   m_indexesFile.write(reinterpret_cast<char*>(&valid), sizeof valid);
-  if (!m_indexesFile) {
+  if (!m_indexesFile)
+  {
     throw std::runtime_error("SwappedMap::erase");
   }
 
   m_descriptors.erase(descriptorsIterator);
   auto cacheIteratorsIterator = m_cacheIterators.find(descriptorsIterator->first);
-  if (cacheIteratorsIterator != m_cacheIterators.end()) {
+  if (cacheIteratorsIterator != m_cacheIterators.end())
+  {
     m_items.erase(descriptorsIterator->first);
     m_cache.erase(cacheIteratorsIterator->second);
     m_cacheIterators.erase(cacheIteratorsIterator);
   }
 }
 
-template<class Key, class T> std::pair<typename SwappedMap<Key, T>::const_iterator, bool> SwappedMap<Key, T>::insert(const std::pair<const Key, T>& value) {
+template<class Key, class T>
+std::pair<typename SwappedMap<Key, T>::const_iterator, bool> SwappedMap<Key, T>::insert(
+    const std::pair<const Key, T>& value)
+{
   uint64_t itemsFileSize;
 
   {
-    if (!m_itemsFile) {
+    if (!m_itemsFile)
+    {
       throw std::runtime_error("SwappedMap::insert");
     }
 
     m_itemsFile.seekp(m_itemsFileSize);
-    try {
+    try
+    {
       boost::archive::binary_oarchive archive(m_itemsFile);
-      archive & value.second;
-    } catch (std::exception&) {
+      archive& value.second;
+    }
+    catch (std::exception&)
+    {
       throw std::runtime_error("SwappedMap::insert");
     }
 
@@ -282,35 +348,40 @@ template<class Key, class T> std::pair<typename SwappedMap<Key, T>::const_iterat
   }
 
   {
-    if (!m_indexesFile) {
+    if (!m_indexesFile)
+    {
       throw std::runtime_error("SwappedMap::insert");
     }
 
-    m_indexesFile.seekp(sizeof(uint64_t) + (sizeof(bool) + sizeof(Key) + sizeof(uint32_t)) * descriptorsCounter);
+    m_indexesFile.seekp(sizeof(uint64_t) +
+                        (sizeof(bool) + sizeof(Key) + sizeof(uint32_t)) * descriptorsCounter);
     bool valid = true;
     m_indexesFile.write(reinterpret_cast<char*>(&valid), sizeof valid);
-    if (!m_indexesFile) {
+    if (!m_indexesFile)
+    {
       throw std::runtime_error("SwappedMap::insert");
     }
 
     m_indexesFile.write(reinterpret_cast<const char*>(&value.first), sizeof value.first);
-    if (!m_indexesFile) {
+    if (!m_indexesFile)
+    {
       throw std::runtime_error("SwappedMap::insert");
     }
 
     uint32_t itemSize = static_cast<uint32_t>(itemsFileSize - m_itemsFileSize);
     m_indexesFile.write(reinterpret_cast<char*>(&itemSize), sizeof itemSize);
-    if (!m_indexesFile) {
+    if (!m_indexesFile)
+    {
       throw std::runtime_error("SwappedMap::insert");
     }
 
     m_indexesFile.seekp(0);
     uint64_t count = descriptorsCounter + 1;
     m_indexesFile.write(reinterpret_cast<char*>(&count), sizeof count);
-    if (!m_indexesFile) {
+    if (!m_indexesFile)
+    {
       throw std::runtime_error("SwappedMap::insert");
     }
-
   }
 
   Descriptor descriptor = { m_itemsFileSize, descriptorsCounter };
@@ -324,25 +395,33 @@ template<class Key, class T> std::pair<typename SwappedMap<Key, T>::const_iterat
   return std::make_pair(const_iterator(this, descriptorsInsert.first), true);
 }
 
-template<class Key, class T> std::pair<const Key, T>* SwappedMap<Key, T>::prepare(const Key& key) {
-  if (m_items.size() == m_poolSize) {
+template<class Key, class T>
+std::pair<const Key, T>* SwappedMap<Key, T>::prepare(const Key& key)
+{
+  if (m_items.size() == m_poolSize)
+  {
     typename std::list<Key>::iterator cacheIter = m_cache.begin();
     m_items.erase(*cacheIter);
     m_cacheIterators.erase(*cacheIter);
     m_cache.erase(cacheIter);
   }
 
-  std::pair<typename std::unordered_map<Key, T>::iterator, bool> itemInsert = m_items.insert(std::make_pair(key, T()));
+  std::pair<typename std::unordered_map<Key, T>::iterator, bool> itemInsert =
+      m_items.insert(std::make_pair(key, T()));
   typename std::list<Key>::iterator cacheIter = m_cache.insert(m_cache.end(), key);
   m_cacheIterators.insert(std::make_pair(key, cacheIter));
   return &*itemInsert.first;
 }
 
-template<class Key, class T> const std::pair<const Key, T>* SwappedMap<Key, T>::load(const Key& key, uint64_t offset) {
+template<class Key, class T>
+const std::pair<const Key, T>* SwappedMap<Key, T>::load(const Key& key, uint64_t offset)
+{
   auto itemIterator = m_items.find(key);
-  if (itemIterator != m_items.end()) {
+  if (itemIterator != m_items.end())
+  {
     auto cacheIteratorsIterator = m_cacheIterators.find(key);
-    if (cacheIteratorsIterator->second != --m_cache.end()) {
+    if (cacheIteratorsIterator->second != --m_cache.end())
+    {
       m_cache.splice(m_cache.end(), m_cache, cacheIteratorsIterator->second);
     }
 
@@ -350,21 +429,27 @@ template<class Key, class T> const std::pair<const Key, T>* SwappedMap<Key, T>::
     return &*itemIterator;
   }
 
-  typename std::unordered_map<Key, Descriptor>::iterator descriptorsIterator = m_descriptors.find(key);
-  if (descriptorsIterator == m_descriptors.end()) {
+  typename std::unordered_map<Key, Descriptor>::iterator descriptorsIterator =
+      m_descriptors.find(key);
+  if (descriptorsIterator == m_descriptors.end())
+  {
     throw std::runtime_error("SwappedMap::load");
   }
 
-  if (!m_itemsFile) {
+  if (!m_itemsFile)
+  {
     throw std::runtime_error("SwappedMap::load");
   }
 
   m_itemsFile.seekg(descriptorsIterator->second.offset);
   T tempItem;
-  try {
+  try
+  {
     boost::archive::binary_iarchive archive(m_itemsFile);
-    archive & tempItem;
-  } catch (std::exception&) {
+    archive& tempItem;
+  }
+  catch (std::exception&)
+  {
     throw std::runtime_error("SwappedMap::load");
   }
 

@@ -26,4 +26,4 @@ namespace Tools
   {
     std::string encode(const std::string& data);
   }
-}
+}  // namespace Tools

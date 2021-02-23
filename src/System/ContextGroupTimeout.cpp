@@ -5,18 +5,23 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "ContextGroupTimeout.h"
+
 #include <System/InterruptedException.h>
 
 using namespace System;
 
-ContextGroupTimeout::ContextGroupTimeout(Dispatcher& dispatcher, ContextGroup& contextGroup, std::chrono::nanoseconds timeout) :
-  workingContextGroup(dispatcher),
-  timeoutTimer(dispatcher) {
+ContextGroupTimeout::ContextGroupTimeout(Dispatcher& dispatcher, ContextGroup& contextGroup,
+                                         std::chrono::nanoseconds timeout)
+    : workingContextGroup(dispatcher), timeoutTimer(dispatcher)
+{
   workingContextGroup.spawn([&, timeout] {
-    try {
+    try
+    {
       timeoutTimer.sleep(timeout);
       contextGroup.interrupt();
-    } catch (InterruptedException&) {
+    }
+    catch (InterruptedException&)
+    {
     }
   });
 }

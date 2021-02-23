@@ -9,16 +9,18 @@
 #include <cstdint>
 #include <memory>
 
-namespace CryptoNote {
+namespace CryptoNote
+{
+  class IInputStream
+  {
+   public:
+    virtual size_t read(char* data, size_t size) = 0;
+  };
 
-class IInputStream {
-public:
-  virtual size_t read(char* data, size_t size) = 0;
-};
+  class IOutputStream
+  {
+   public:
+    virtual void write(const char* data, size_t size) = 0;
+  };
 
-class IOutputStream {
-public:
-  virtual void write(const char* data, size_t size) = 0;
-};
-
-}
+}  // namespace CryptoNote

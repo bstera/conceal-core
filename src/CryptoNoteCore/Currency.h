@@ -6,24 +6,24 @@
 
 #pragma once
 
+#include <boost/utility.hpp>
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <boost/utility.hpp>
+
 #include "../CryptoNoteConfig.h"
-#include "../crypto/hash.h"
 #include "../Logging/LoggerRef.h"
+#include "../crypto/hash.h"
 #include "CryptoNoteBasic.h"
 #include "Difficulty.h"
 
 namespace CryptoNote
 {
-
   class AccountBase;
 
   class Currency
   {
-  public:
+   public:
     static const std::vector<uint64_t> PRETTY_AMOUNTS;
 
     uint64_t maxBlockHeight() const { return m_maxBlockHeight; }
@@ -61,7 +61,7 @@ namespace CryptoNote
     uint64_t blockFutureTimeLimit_v1() const { return m_blockFutureTimeLimit_v1; }
 
     uint64_t moneySupply() const { return m_moneySupply; }
-    //uint64_t genesisBlockReward() const { return m_genesisBlockReward; }
+    // uint64_t genesisBlockReward() const { return m_genesisBlockReward; }
 
     size_t rewardBlocksWindow() const { return m_rewardBlocksWindow; }
 
@@ -104,8 +104,14 @@ namespace CryptoNote
       }
     };
     size_t difficultyBlocksCount() const { return m_difficultyWindow + m_difficultyLag; }
-    size_t difficultyBlocksCount2() const { return CryptoNote::parameters::DIFFICULTY_BLOCKS_COUNT; }    //LWMA3
-    size_t difficultyBlocksCount3() const { return CryptoNote::parameters::DIFFICULTY_BLOCKS_COUNT_V1; } //LWMA1
+    size_t difficultyBlocksCount2() const
+    {
+      return CryptoNote::parameters::DIFFICULTY_BLOCKS_COUNT;
+    }  // LWMA3
+    size_t difficultyBlocksCount3() const
+    {
+      return CryptoNote::parameters::DIFFICULTY_BLOCKS_COUNT_V1;
+    }  // LWMA1
 
     uint64_t depositMinAmount() const { return m_depositMinAmount; }
     uint32_t depositMinTerm() const { return m_depositMinTerm; }
@@ -116,22 +122,34 @@ namespace CryptoNote
 
     size_t maxBlockSizeInitial() const { return m_maxBlockSizeInitial; }
     uint64_t maxBlockSizeGrowthSpeedNumerator() const { return m_maxBlockSizeGrowthSpeedNumerator; }
-    uint64_t maxBlockSizeGrowthSpeedDenominator() const { return m_maxBlockSizeGrowthSpeedDenominator; }
+    uint64_t maxBlockSizeGrowthSpeedDenominator() const
+    {
+      return m_maxBlockSizeGrowthSpeedDenominator;
+    }
 
     uint64_t lockedTxAllowedDeltaSeconds() const { return m_lockedTxAllowedDeltaSeconds; }
     size_t lockedTxAllowedDeltaBlocks() const { return m_lockedTxAllowedDeltaBlocks; }
 
     uint64_t mempoolTxLiveTime() const { return m_mempoolTxLiveTime; }
     uint64_t mempoolTxFromAltBlockLiveTime() const { return m_mempoolTxFromAltBlockLiveTime; }
-    uint64_t numberOfPeriodsToForgetTxDeletedFromPool() const { return m_numberOfPeriodsToForgetTxDeletedFromPool; }
+    uint64_t numberOfPeriodsToForgetTxDeletedFromPool() const
+    {
+      return m_numberOfPeriodsToForgetTxDeletedFromPool;
+    }
 
     uint32_t upgradeHeight(uint8_t majorVersion) const;
     unsigned int upgradeVotingThreshold() const { return m_upgradeVotingThreshold; }
     uint32_t upgradeVotingWindow() const { return m_upgradeVotingWindow; }
     uint32_t upgradeWindow() const { return m_upgradeWindow; }
-    uint32_t minNumberVotingBlocks() const { return (m_upgradeVotingWindow * m_upgradeVotingThreshold + 99) / 100; }
+    uint32_t minNumberVotingBlocks() const
+    {
+      return (m_upgradeVotingWindow * m_upgradeVotingThreshold + 99) / 100;
+    }
     uint32_t maxUpgradeDistance() const { return 7 * m_upgradeWindow; }
-    uint32_t calculateUpgradeHeight(uint32_t voteCompleteHeight) const { return voteCompleteHeight + m_upgradeWindow; }
+    uint32_t calculateUpgradeHeight(uint32_t voteCompleteHeight) const
+    {
+      return voteCompleteHeight + m_upgradeWindow;
+    }
 
     size_t transactionMaxSize() const { return m_transactionMaxSize; }
     size_t fusionTxMaxSize() const { return m_fusionTxMaxSize; }
@@ -149,8 +167,9 @@ namespace CryptoNote
     const Block &genesisBlock() const { return m_genesisBlock; }
     const Crypto::Hash &genesisBlockHash() const { return m_genesisBlockHash; }
 
-    bool getBlockReward(size_t medianSize, size_t currentBlockSize, uint64_t alreadyGeneratedCoins, uint64_t fee, uint32_t height,
-                        uint64_t &reward, int64_t &emissionChange) const;
+    bool getBlockReward(size_t medianSize, size_t currentBlockSize, uint64_t alreadyGeneratedCoins,
+                        uint64_t fee, uint32_t height, uint64_t &reward,
+                        int64_t &emissionChange) const;
     uint64_t calculateInterest(uint64_t amount, uint32_t term, uint32_t height) const;
     uint64_t calculateInterestV2(uint64_t amount, uint32_t term) const;
     uint64_t calculateInterestV3(uint64_t amount, uint32_t term) const;
@@ -161,15 +180,20 @@ namespace CryptoNote
     uint64_t getTransactionFee(const Transaction &tx, uint32_t height) const;
     size_t maxBlockCumulativeSize(uint64_t height) const;
 
-    bool constructMinerTx(uint32_t height, size_t medianSize, uint64_t alreadyGeneratedCoins, size_t currentBlockSize,
-                          uint64_t fee, const AccountPublicAddress &minerAddress, Transaction &tx,
+    bool constructMinerTx(uint32_t height, size_t medianSize, uint64_t alreadyGeneratedCoins,
+                          size_t currentBlockSize, uint64_t fee,
+                          const AccountPublicAddress &minerAddress, Transaction &tx,
                           const BinaryArray &extraNonce = BinaryArray(), size_t maxOuts = 1) const;
 
     bool isFusionTransaction(const Transaction &transaction) const;
     bool isFusionTransaction(const Transaction &transaction, size_t size) const;
-    bool isFusionTransaction(const std::vector<uint64_t> &inputsAmounts, const std::vector<uint64_t> &outputsAmounts, size_t size) const;
-    bool isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold, uint32_t height) const;
-    bool isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold, uint8_t &amountPowerOfTen, uint32_t height) const;
+    bool isFusionTransaction(const std::vector<uint64_t> &inputsAmounts,
+                             const std::vector<uint64_t> &outputsAmounts, size_t size) const;
+    bool isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold,
+                                                    uint32_t height) const;
+    bool isAmountApplicableInFusionTransactionInput(uint64_t amount, uint64_t threshold,
+                                                    uint8_t &amountPowerOfTen,
+                                                    uint32_t height) const;
 
     std::string accountAddressAsString(const AccountBase &account) const;
     std::string accountAddressAsString(const AccountPublicAddress &accountPublicAddress) const;
@@ -179,26 +203,32 @@ namespace CryptoNote
     std::string formatAmount(int64_t amount) const;
     bool parseAmount(const std::string &str, uint64_t &amount) const;
 
-    difficulty_type nextDifficulty(std::vector<uint64_t> timestamps, std::vector<difficulty_type> cumulativeDifficulties) const;
-    difficulty_type nextDifficulty(uint8_t version, uint32_t blockIndex, std::vector<uint64_t> timestamps, std::vector<difficulty_type> cumulativeDifficulties) const;
-    difficulty_type nextDifficultyLWMA3(std::vector<uint64_t> timestamps, std::vector<difficulty_type> cumulativeDifficulties) const;
-    difficulty_type nextDifficultyLWMA1(std::vector<uint64_t> timestamps, std::vector<difficulty_type> cumulativeDifficulties, uint64_t height) const;
+    difficulty_type nextDifficulty(std::vector<uint64_t> timestamps,
+                                   std::vector<difficulty_type> cumulativeDifficulties) const;
+    difficulty_type nextDifficulty(uint8_t version, uint32_t blockIndex,
+                                   std::vector<uint64_t> timestamps,
+                                   std::vector<difficulty_type> cumulativeDifficulties) const;
+    difficulty_type nextDifficultyLWMA3(std::vector<uint64_t> timestamps,
+                                        std::vector<difficulty_type> cumulativeDifficulties) const;
+    difficulty_type nextDifficultyLWMA1(std::vector<uint64_t> timestamps,
+                                        std::vector<difficulty_type> cumulativeDifficulties,
+                                        uint64_t height) const;
 
-    bool checkProofOfWork(Crypto::cn_context &context, const Block &block, difficulty_type currentDifficulty, Crypto::Hash &proofOfWork) const;
+    bool checkProofOfWork(Crypto::cn_context &context, const Block &block,
+                          difficulty_type currentDifficulty, Crypto::Hash &proofOfWork) const;
 
-    size_t getApproximateMaximumInputCount(size_t transactionSize, size_t outputCount, size_t mixinCount) const;
+    size_t getApproximateMaximumInputCount(size_t transactionSize, size_t outputCount,
+                                           size_t mixinCount) const;
 
-  private:
-    Currency(Logging::ILogger &log) : logger(log, "currency")
-    {
-    }
+   private:
+    Currency(Logging::ILogger &log) : logger(log, "currency") { }
 
     bool init();
 
     bool generateGenesisBlock();
     uint64_t baseRewardFunction(uint64_t alreadyGeneratedCoins, uint32_t height) const;
 
-  private:
+   private:
     uint64_t m_maxBlockHeight;
     size_t m_maxBlockBlobSize;
     size_t m_maxTxSize;
@@ -212,7 +242,7 @@ namespace CryptoNote
     uint64_t m_blockFutureTimeLimit_v1;
 
     uint64_t m_moneySupply;
-    //uint64_t m_genesisBlockReward;
+    // uint64_t m_genesisBlockReward;
 
     size_t m_rewardBlocksWindow;
 
@@ -291,7 +321,7 @@ namespace CryptoNote
 
   class CurrencyBuilder : boost::noncopyable
   {
-  public:
+   public:
     CurrencyBuilder(Logging::ILogger &log);
 
     Currency currency()
@@ -304,7 +334,7 @@ namespace CryptoNote
     }
 
     Transaction generateGenesisTransaction();
-    //Transaction generateGenesisTransaction(const std::vector<AccountPublicAddress>& targets);
+    // Transaction generateGenesisTransaction(const std::vector<AccountPublicAddress>& targets);
 
     CurrencyBuilder &maxBlockNumber(uint64_t val)
     {
@@ -358,7 +388,8 @@ namespace CryptoNote
       m_currency.m_moneySupply = val;
       return *this;
     }
-    //CurrencyBuilder& genesisBlockReward(uint64_t val) { m_currency.m_genesisBlockReward = val; return *this; }
+    // CurrencyBuilder& genesisBlockReward(uint64_t val) { m_currency.m_genesisBlockReward = val;
+    // return *this; }
 
     CurrencyBuilder &rewardBlocksWindow(size_t val)
     {
@@ -606,8 +637,8 @@ namespace CryptoNote
       return *this;
     }
 
-  private:
+   private:
     Currency m_currency;
   };
 
-} // namespace CryptoNote
+}  // namespace CryptoNote

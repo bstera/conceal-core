@@ -8,17 +8,17 @@
 
 #include <time.h>
 
-namespace CryptoNote {
-
-  struct ITimeProvider {
+namespace CryptoNote
+{
+  struct ITimeProvider
+  {
     virtual time_t now() = 0;
-    virtual ~ITimeProvider() {}
+    virtual ~ITimeProvider() { }
   };
 
-  struct RealTimeProvider : public ITimeProvider {
-    virtual time_t now() override {
-      return time(nullptr);
-    }
+  struct RealTimeProvider : public ITimeProvider
+  {
+    virtual time_t now() override { return time(nullptr); }
   };
 
-}
+}  // namespace CryptoNote

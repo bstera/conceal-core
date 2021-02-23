@@ -6,14 +6,14 @@
 
 #include "StringOutputStream.h"
 
-namespace Common {
+namespace Common
+{
+  StringOutputStream::StringOutputStream(std::string& out) : out(out) { }
 
-StringOutputStream::StringOutputStream(std::string& out) : out(out) {
-}
+  size_t StringOutputStream::writeSome(const void* data, size_t size)
+  {
+    out.append(static_cast<const char*>(data), size);
+    return size;
+  }
 
-size_t StringOutputStream::writeSome(const void* data, size_t size) {
-  out.append(static_cast<const char*>(data), size);
-  return size;
-}
-
-}
+}  // namespace Common

@@ -6,23 +6,23 @@
 
 #pragma once
 
+#include <boost/program_options.hpp>
 #include <cstdint>
 #include <string>
 
-#include <boost/program_options.hpp>
+namespace CryptoNote
+{
+  class MinerConfig
+  {
+   public:
+    MinerConfig();
 
-namespace CryptoNote {
+    static void initOptions(boost::program_options::options_description& desc);
+    void init(const boost::program_options::variables_map& options);
 
-class MinerConfig {
-public:
-  MinerConfig();
+    std::string extraMessages;
+    std::string startMining;
+    uint32_t miningThreads;
+  };
 
-  static void initOptions(boost::program_options::options_description& desc);
-  void init(const boost::program_options::variables_map& options);
-
-  std::string extraMessages;
-  std::string startMining;
-  uint32_t miningThreads;
-};
-
-} //namespace CryptoNote
+}  // namespace CryptoNote

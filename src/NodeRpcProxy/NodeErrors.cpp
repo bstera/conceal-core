@@ -6,10 +6,11 @@
 
 #include "NodeErrors.h"
 
-namespace CryptoNote {
-namespace error {
+namespace CryptoNote
+{
+  namespace error
+  {
+    NodeErrorCategory NodeErrorCategory::INSTANCE;
 
-NodeErrorCategory NodeErrorCategory::INSTANCE;
-
-}
-}
+  }
+}  // namespace CryptoNote

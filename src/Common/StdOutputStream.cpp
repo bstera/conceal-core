@@ -6,18 +6,19 @@
 
 #include "StdOutputStream.h"
 
-namespace Common {
+namespace Common
+{
+  StdOutputStream::StdOutputStream(std::ostream& out) : out(out) { }
 
-StdOutputStream::StdOutputStream(std::ostream& out) : out(out) {
-}
+  size_t StdOutputStream::writeSome(const void* data, size_t size)
+  {
+    out.write(static_cast<const char*>(data), size);
+    if (out.bad())
+    {
+      return 0;
+    }
 
-size_t StdOutputStream::writeSome(const void* data, size_t size) {
-  out.write(static_cast<const char*>(data), size);
-  if (out.bad()) {
-    return 0;
+    return size;
   }
 
-  return size;
-}
-
-}
+}  // namespace Common

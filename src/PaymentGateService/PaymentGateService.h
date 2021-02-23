@@ -7,19 +7,24 @@
 #pragma once
 
 #include "ConfigurationManager.h"
-#include "PaymentServiceConfiguration.h"
-
 #include "Logging/ConsoleLogger.h"
 #include "Logging/LoggerGroup.h"
 #include "Logging/StreamLogger.h"
-
 #include "PaymentGate/NodeFactory.h"
 #include "PaymentGate/WalletService.h"
+#include "PaymentServiceConfiguration.h"
 
-class PaymentGateService {
-public:
-
-  PaymentGateService() : dispatcher(nullptr), stopEvent(nullptr), config(), service(nullptr), logger(), currencyBuilder(logger) {
+class PaymentGateService
+{
+ public:
+  PaymentGateService()
+      : dispatcher(nullptr),
+        stopEvent(nullptr),
+        config(),
+        service(nullptr),
+        logger(),
+        currencyBuilder(logger)
+  {
   }
 
   bool init(int argc, char** argv);
@@ -30,11 +35,10 @@ public:
 
   void run();
   void stop();
-  
+
   Logging::ILogger& getLogger() { return logger; }
 
-private:
-
+ private:
   void runInProcess(Logging::LoggerRef& log);
   void runRpcProxy(Logging::LoggerRef& log);
 
@@ -45,7 +49,7 @@ private:
   PaymentService::ConfigurationManager config;
   PaymentService::WalletService* service;
   CryptoNote::CurrencyBuilder currencyBuilder;
-  
+
   Logging::LoggerGroup logger;
   std::ofstream fileStream;
   Logging::StreamLogger fileLogger;

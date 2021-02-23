@@ -24,36 +24,36 @@
 
 inline void vandq_f32(float32x4_t& v, uint32_t v2)
 {
-	uint32x4_t vc = vdupq_n_u32(v2);
-	v = (float32x4_t)vandq_u32((uint32x4_t)v, vc);
+  uint32x4_t vc = vdupq_n_u32(v2);
+  v = (float32x4_t)vandq_u32((uint32x4_t)v, vc);
 }
 
 inline void vorq_f32(float32x4_t& v, uint32_t v2)
 {
-	uint32x4_t vc = vdupq_n_u32(v2);
-	v = (float32x4_t)vorrq_u32((uint32x4_t)v, vc);
+  uint32x4_t vc = vdupq_n_u32(v2);
+  v = (float32x4_t)vorrq_u32((uint32x4_t)v, vc);
 }
 
 inline void veorq_f32(float32x4_t& v, uint32_t v2)
 {
-	uint32x4_t vc = vdupq_n_u32(v2);
-	v = (float32x4_t)veorq_u32((uint32x4_t)v, vc);
+  uint32x4_t vc = vdupq_n_u32(v2);
+  v = (float32x4_t)veorq_u32((uint32x4_t)v, vc);
 }
 
-template <size_t v>
+template<size_t v>
 inline void vrot_si32(int32x4_t& r)
 {
-	r = (int32x4_t)vextq_s8((int8x16_t)r, (int8x16_t)r, v);
+  r = (int32x4_t)vextq_s8((int8x16_t)r, (int8x16_t)r, v);
 }
 
-template <>
+template<>
 inline void vrot_si32<0>(int32x4_t& r)
 {
 }
 
 inline uint32_t vheor_s32(const int32x4_t& v)
 {
-	int32x4_t v0 = veorq_s32(v, vrev64q_s32(v));
-	int32x2_t vf = veor_s32(vget_high_s32(v0), vget_low_s32(v0));
-	return (uint32_t)vget_lane_s32(vf, 0);
+  int32x4_t v0 = veorq_s32(v, vrev64q_s32(v));
+  int32x2_t vf = veor_s32(vget_high_s32(v0), vget_low_s32(v0));
+  return (uint32_t)vget_lane_s32(vf, 0);
 }

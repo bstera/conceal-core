@@ -6,19 +6,19 @@
 
 #pragma once
 
-#include <unordered_map>
 #include <random>
+#include <unordered_map>
 
-template <typename T, typename Gen>
-class ShuffleGenerator {
-public:
+template<typename T, typename Gen>
+class ShuffleGenerator
+{
+ public:
+  ShuffleGenerator(T n, const Gen& gen = Gen()) : N(n), generator(gen), count(n) { }
 
-  ShuffleGenerator(T n, const Gen& gen = Gen()) :
-    N(n), generator(gen), count(n) {}
-
-  T operator()() {
-
-    if (count == 0) {
+  T operator()()
+  {
+    if (count == 0)
+    {
       throw std::runtime_error("shuffle sequence ended");
     }
 
@@ -26,7 +26,7 @@ public:
     typedef typename distr_t::param_type param_t;
 
     distr_t distr;
-    
+
     T value = distr(generator, param_t(0, --count));
 
     auto rvalIt = selected.find(count);
@@ -34,23 +34,26 @@ public:
 
     auto lvalIt = selected.find(value);
 
-    if (lvalIt != selected.end()) {
+    if (lvalIt != selected.end())
+    {
       value = lvalIt->second;
       lvalIt->second = rval;
-    } else {
+    }
+    else
+    {
       selected[value] = rval;
     }
 
     return value;
   }
 
-  void reset() {
+  void reset()
+  {
     count = N;
     selected.clear();
   }
 
-private:
-
+ private:
   std::unordered_map<T, T> selected;
   T count;
   const T N;

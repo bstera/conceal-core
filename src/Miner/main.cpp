@@ -4,22 +4,23 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "Common/SignalHandler.h"
-
-#include "Logging/LoggerGroup.h"
-#include "Logging/ConsoleLogger.h"
-#include "Logging/LoggerRef.h"
-
-#include "MinerManager.h"
-
 #include <System/Dispatcher.h>
 
-int main(int argc, char** argv) {
-  try {
+#include "Common/SignalHandler.h"
+#include "Logging/ConsoleLogger.h"
+#include "Logging/LoggerGroup.h"
+#include "Logging/LoggerRef.h"
+#include "MinerManager.h"
+
+int main(int argc, char** argv)
+{
+  try
+  {
     CryptoNote::MiningConfig config;
     config.parse(argc, argv);
 
-    if (config.help) {
+    if (config.help)
+    {
       config.printHelp();
       return 0;
     }
@@ -32,7 +33,9 @@ int main(int argc, char** argv) {
     Miner::MinerManager app(dispatcher, config, loggerGroup);
 
     app.start();
-  } catch (std::exception& e) {
+  }
+  catch (std::exception& e)
+  {
     std::cerr << "Fatal: " << e.what() << std::endl;
     return 1;
   }

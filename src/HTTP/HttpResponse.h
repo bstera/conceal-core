@@ -6,15 +6,17 @@
 
 #pragma once
 
+#include <map>
 #include <ostream>
 #include <string>
-#include <map>
 
-namespace CryptoNote {
-
-  class HttpResponse {
-  public:
-    enum HTTP_STATUS {
+namespace CryptoNote
+{
+  class HttpResponse
+  {
+   public:
+    enum HTTP_STATUS
+    {
       STATUS_200,
       STATUS_401,
       STATUS_404,
@@ -31,7 +33,7 @@ namespace CryptoNote {
     HTTP_STATUS getStatus() const { return status; }
     const std::string& getBody() const { return body; }
 
-  private:
+   private:
     friend std::ostream& operator<<(std::ostream& os, const HttpResponse& resp);
     std::ostream& printHttpResponse(std::ostream& os) const;
 
@@ -40,8 +42,9 @@ namespace CryptoNote {
     std::string body;
   };
 
-  inline std::ostream& operator<<(std::ostream& os, const HttpResponse& resp) {
+  inline std::ostream& operator<<(std::ostream& os, const HttpResponse& resp)
+  {
     return resp.printHttpResponse(os);
   }
 
-} //namespace CryptoNote
+}  // namespace CryptoNote

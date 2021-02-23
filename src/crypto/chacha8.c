@@ -4,30 +4,31 @@ D. J. Bernstein
 Public domain.
 */
 
+#include "chacha8.h"
+
 #include <memory.h>
 #include <stdio.h>
 #include <sys/param.h>
 
-#include "chacha8.h"
 #include "Common/int-util.h"
 
 /*
  * The following macros are used to obtain exact-width results.
  */
-#define U8V(v) ((uint8_t)(v)&UINT8_C(0xFF))
+#define U8V(v)  ((uint8_t)(v)&UINT8_C(0xFF))
 #define U32V(v) ((uint32_t)(v)&UINT32_C(0xFFFFFFFF))
 
 /*
  * The following macros load words from an array of bytes with
  * different types of endianness, and vice versa.
  */
-#define U8TO32_LITTLE(p) SWAP32LE(((uint32_t *)(p))[0])
+#define U8TO32_LITTLE(p)    SWAP32LE(((uint32_t *)(p))[0])
 #define U32TO8_LITTLE(p, v) (((uint32_t *)(p))[0] = SWAP32LE(v))
 
 #define ROTATE(v, c) (rol32(v, c))
-#define XOR(v, w) ((v) ^ (w))
-#define PLUS(v, w) (U32V((v) + (w)))
-#define PLUSONE(v) (PLUS((v), 1))
+#define XOR(v, w)    ((v) ^ (w))
+#define PLUS(v, w)   (U32V((v) + (w)))
+#define PLUSONE(v)   (PLUS((v), 1))
 
 #define QUARTERROUND(a, b, c, d) \
   a = PLUS(a, b);                \

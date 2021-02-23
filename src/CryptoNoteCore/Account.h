@@ -9,35 +9,37 @@
 #include "CryptoNoteCore/CryptoNoteBasic.h"
 #include "crypto/crypto.h"
 
-namespace CryptoNote {
-
+namespace CryptoNote
+{
   class ISerializer;
 
   /************************************************************************/
   /*                                                                      */
   /************************************************************************/
-  class AccountBase {
-  public:
+  class AccountBase
+  {
+   public:
     AccountBase();
     void generate();
-    static void generateViewFromSpend(Crypto::SecretKey &, Crypto::SecretKey &, Crypto::PublicKey &);
+    static void generateViewFromSpend(Crypto::SecretKey &, Crypto::SecretKey &,
+                                      Crypto::PublicKey &);
 
-
-    const AccountKeys& getAccountKeys() const;
-    void setAccountKeys(const AccountKeys& keys);
+    const AccountKeys &getAccountKeys() const;
+    void setAccountKeys(const AccountKeys &keys);
     uint64_t get_createtime() const { return m_creation_timestamp; }
     void set_createtime(uint64_t val) { m_creation_timestamp = val; }
-    void serialize(ISerializer& s);
+    void serialize(ISerializer &s);
 
-    template <class t_archive>
-    inline void serialize(t_archive &a, const unsigned int /*ver*/) {
-      a & m_keys;
-      a & m_creation_timestamp;
+    template<class t_archive>
+    inline void serialize(t_archive &a, const unsigned int /*ver*/)
+    {
+      a &m_keys;
+      a &m_creation_timestamp;
     }
 
-  private:
+   private:
     void setNull();
     AccountKeys m_keys;
     uint64_t m_creation_timestamp;
   };
-}
+}  // namespace CryptoNote

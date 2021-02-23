@@ -8,20 +8,20 @@
 
 #include <boost/program_options.hpp>
 
-namespace CryptoNote {
+namespace CryptoNote
+{
+  class RpcServerConfig
+  {
+   public:
+    RpcServerConfig();
 
-class RpcServerConfig {
-public:
+    static void initOptions(boost::program_options::options_description& desc);
+    void init(const boost::program_options::variables_map& options);
 
-  RpcServerConfig();
+    std::string getBindAddress() const;
 
-  static void initOptions(boost::program_options::options_description& desc);
-  void init(const boost::program_options::variables_map& options);
+    std::string bindIp;
+    uint16_t bindPort;
+  };
 
-  std::string getBindAddress() const;
-
-  std::string bindIp;
-  uint16_t bindPort;
-};
-
-}
+}  // namespace CryptoNote

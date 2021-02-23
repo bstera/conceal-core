@@ -12,7 +12,7 @@ namespace Tools
 {
   class PasswordContainer
   {
-  public:
+   public:
     static const size_t max_password_size = 1024;
 
     PasswordContainer();
@@ -23,15 +23,19 @@ namespace Tools
     void clear();
     bool empty() const { return m_empty; }
     const std::string& password() const { return m_password; }
-    void password(std::string&& val) { m_password = std::move(val); m_empty = false; }
+    void password(std::string&& val)
+    {
+      m_password = std::move(val);
+      m_empty = false;
+    }
     bool read_password();
 
-  private:
+   private:
     bool read_from_file();
     bool read_from_tty();
 
-  private:
+   private:
     bool m_empty;
     std::string m_password;
   };
-}
+}  // namespace Tools

@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <Logging/LoggerRef.h>
+
 #include <atomic>
 #include <list>
 #include <mutex>
@@ -17,14 +19,13 @@
 #include "CryptoNoteCore/IMinerHandler.h"
 #include "CryptoNoteCore/MinerConfig.h"
 #include "CryptoNoteCore/OnceInInterval.h"
-
-#include <Logging/LoggerRef.h>
-
 #include "Serialization/ISerializer.h"
 
-namespace CryptoNote {
-  class miner {
-  public:
+namespace CryptoNote
+{
+  class miner
+  {
+   public:
     miner(const Currency& currency, IMinerHandler& handler, Logging::ILogger& log);
     ~miner();
 
@@ -38,23 +39,22 @@ namespace CryptoNote {
     bool is_mining();
     bool on_idle();
     void on_synchronized();
-    //synchronous analog (for fast calls)
-    static bool find_nonce_for_given_block(Crypto::cn_context &context, Block& bl, const difficulty_type& diffic);
+    // synchronous analog (for fast calls)
+    static bool find_nonce_for_given_block(Crypto::cn_context& context, Block& bl,
+                                           const difficulty_type& diffic);
     void pause();
     void resume();
     void do_print_hashrate(bool do_hr);
 
-  private:
+   private:
     bool worker_thread(uint32_t th_local_index);
     bool request_block_template();
-    void  merge_hr();
+    void merge_hr();
 
     struct miner_config
     {
       uint64_t current_extra_message_index;
-      void serialize(ISerializer& s) {
-        KV_MEMBER(current_extra_message_index)
-      }
+      void serialize(ISerializer& s) { KV_MEMBER(current_extra_message_index) }
     };
 
     const Currency& m_currency;
@@ -89,4 +89,4 @@ namespace CryptoNote {
     bool m_do_print_hashrate;
     bool m_do_mining;
   };
-}
+}  // namespace CryptoNote

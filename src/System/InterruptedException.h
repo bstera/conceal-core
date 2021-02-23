@@ -8,13 +8,12 @@
 
 #include <exception>
 
-namespace System {
+namespace System
+{
+  class InterruptedException : public std::exception
+  {
+   public:
+    virtual const char* what() const throw() override { return "interrupted"; }
+  };
 
-class InterruptedException : public std::exception {
-  public:
-    virtual const char* what() const throw() override {
-      return "interrupted";
-    }
-};
-
-}
+}  // namespace System

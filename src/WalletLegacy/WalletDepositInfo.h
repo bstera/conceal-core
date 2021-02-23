@@ -7,11 +7,12 @@
 
 #include "IWallet.h"
 
-namespace CryptoNote {
+namespace CryptoNote
+{
+  struct DepositInfo
+  {
+    Deposit deposit;
+    uint32_t outputInTransaction;
+  };
 
-struct DepositInfo {
-  Deposit deposit;
-  uint32_t outputInTransaction;
-};
-
-}
+}  // namespace CryptoNote

@@ -17,8 +17,9 @@ namespace CryptoNote
     uint64_t mining_speed;
     uint64_t alternative_blocks;
     std::string top_block_id_str;
-    
-    void serialize(ISerializer& s) {
+
+    void serialize(ISerializer& s)
+    {
       KV_MEMBER(tx_pool_size)
       KV_MEMBER(blockchain_height)
       KV_MEMBER(mining_speed)
@@ -26,4 +27,4 @@ namespace CryptoNote
       KV_MEMBER(top_block_id_str)
     }
   };
-}
+}  // namespace CryptoNote

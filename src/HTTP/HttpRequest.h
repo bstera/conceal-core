@@ -10,9 +10,11 @@
 #include <map>
 #include <string>
 
-namespace CryptoNote {
-  class HttpRequest {
-  public:
+namespace CryptoNote
+{
+  class HttpRequest
+  {
+   public:
     typedef std::map<std::string, std::string> Headers;
 
     const std::string& getMethod() const;
@@ -24,7 +26,7 @@ namespace CryptoNote {
     void setBody(const std::string& b);
     void setUrl(const std::string& uri);
 
-  private:
+   private:
     friend class HttpParser;
 
     std::string method;
@@ -36,7 +38,8 @@ namespace CryptoNote {
     std::ostream& printHttpRequest(std::ostream& os) const;
   };
 
-  inline std::ostream& operator<<(std::ostream& os, const HttpRequest& resp) {
+  inline std::ostream& operator<<(std::ostream& os, const HttpRequest& resp)
+  {
     return resp.printHttpRequest(os);
   }
-}
+}  // namespace CryptoNote

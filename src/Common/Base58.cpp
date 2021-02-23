@@ -7,12 +7,13 @@
 #include "Base58.h"
 
 #include <assert.h>
+
 #include <string>
 #include <vector>
 
+#include "Varint.h"
 #include "crypto/hash.h"
 #include "int-util.h"
-#include "Varint.h"
 
 namespace Tools
 {
@@ -22,8 +23,9 @@ namespace Tools
     {
       const char alphabet[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
       const size_t alphabet_size = sizeof(alphabet) - 1;
-      const size_t encoded_block_sizes[] = {0, 2, 3, 5, 6, 7, 9, 10, 11};
-      const size_t full_block_size = sizeof(encoded_block_sizes) / sizeof(encoded_block_sizes[0]) - 1;
+      const size_t encoded_block_sizes[] = { 0, 2, 3, 5, 6, 7, 9, 10, 11 };
+      const size_t full_block_size =
+          sizeof(encoded_block_sizes) / sizeof(encoded_block_sizes[0]) - 1;
       const size_t full_encoded_block_size = encoded_block_sizes[full_block_size];
       const size_t addr_checksum_size = 4;
 
@@ -48,7 +50,7 @@ namespace Tools
 
         static reverse_alphabet instance;
 
-      private:
+       private:
         std::vector<int8_t> m_data;
       };
 
@@ -73,7 +75,7 @@ namespace Tools
 
         static decoded_block_sizes instance;
 
-      private:
+       private:
         std::vector<int> m_data;
       };
 
@@ -86,15 +88,18 @@ namespace Tools
         uint64_t res = 0;
         switch (9 - size)
         {
-        case 1:            res |= *data++; /* FALLTHRU */
-        case 2: res <<= 8; res |= *data++; /* FALLTHRU */
-        case 3: res <<= 8; res |= *data++; /* FALLTHRU */
-        case 4: res <<= 8; res |= *data++; /* FALLTHRU */
-        case 5: res <<= 8; res |= *data++; /* FALLTHRU */
-        case 6: res <<= 8; res |= *data++; /* FALLTHRU */
-        case 7: res <<= 8; res |= *data++; /* FALLTHRU */
-        case 8: res <<= 8; res |= *data; break;
-        default: assert(false);
+          case 1: res |= *data++;            /* FALLTHRU */
+          case 2: res <<= 8; res |= *data++; /* FALLTHRU */
+          case 3: res <<= 8; res |= *data++; /* FALLTHRU */
+          case 4: res <<= 8; res |= *data++; /* FALLTHRU */
+          case 5: res <<= 8; res |= *data++; /* FALLTHRU */
+          case 6: res <<= 8; res |= *data++; /* FALLTHRU */
+          case 7: res <<= 8; res |= *data++; /* FALLTHRU */
+          case 8:
+            res <<= 8;
+            res |= *data;
+            break;
+          default: assert(false);
         }
 
         return res;
@@ -129,7 +134,7 @@ namespace Tools
 
         int res_size = decoded_block_sizes::instance(size);
         if (res_size <= 0)
-          return false; // Invalid block size
+          return false;  // Invalid block size
 
         uint64_t res_num = 0;
         uint64_t order = 1;
@@ -137,25 +142,26 @@ namespace Tools
         {
           int digit = reverse_alphabet::instance(block[i]);
           if (digit < 0)
-            return false; // Invalid symbol
+            return false;  // Invalid symbol
 
           uint64_t product_hi;
           uint64_t tmp = res_num + mul128(order, digit, &product_hi);
           if (tmp < res_num || 0 != product_hi)
-            return false; // Overflow
+            return false;  // Overflow
 
           res_num = tmp;
-          order *= alphabet_size; // Never overflows, 58^10 < 2^64
+          order *= alphabet_size;  // Never overflows, 58^10 < 2^64
         }
 
-        if (static_cast<size_t>(res_size) < full_block_size && (UINT64_C(1) << (8 * res_size)) <= res_num)
-          return false; // Overflow
+        if (static_cast<size_t>(res_size) < full_block_size &&
+            (UINT64_C(1) << (8 * res_size)) <= res_num)
+          return false;  // Overflow
 
         uint_64_to_8be(res_num, res_size, reinterpret_cast<uint8_t*>(res));
 
         return true;
       }
-    }
+    }  // namespace
 
     std::string encode(const std::string& data)
     {
@@ -164,17 +170,20 @@ namespace Tools
 
       size_t full_block_count = data.size() / full_block_size;
       size_t last_block_size = data.size() % full_block_size;
-      size_t res_size = full_block_count * full_encoded_block_size + encoded_block_sizes[last_block_size];
+      size_t res_size =
+          full_block_count * full_encoded_block_size + encoded_block_sizes[last_block_size];
 
       std::string res(res_size, alphabet[0]);
       for (size_t i = 0; i < full_block_count; ++i)
       {
-        encode_block(data.data() + i * full_block_size, full_block_size, &res[i * full_encoded_block_size]);
+        encode_block(data.data() + i * full_block_size, full_block_size,
+                     &res[i * full_encoded_block_size]);
       }
 
       if (0 < last_block_size)
       {
-        encode_block(data.data() + full_block_count * full_block_size, last_block_size, &res[full_block_count * full_encoded_block_size]);
+        encode_block(data.data() + full_block_count * full_block_size, last_block_size,
+                     &res[full_block_count * full_encoded_block_size]);
       }
 
       return res;
@@ -192,20 +201,21 @@ namespace Tools
       size_t last_block_size = enc.size() % full_encoded_block_size;
       int last_block_decoded_size = decoded_block_sizes::instance(last_block_size);
       if (last_block_decoded_size < 0)
-        return false; // Invalid enc length
+        return false;  // Invalid enc length
       size_t data_size = full_block_count * full_block_size + last_block_decoded_size;
 
       data.resize(data_size, 0);
       for (size_t i = 0; i < full_block_count; ++i)
       {
-        if (!decode_block(enc.data() + i * full_encoded_block_size, full_encoded_block_size, &data[i * full_block_size]))
+        if (!decode_block(enc.data() + i * full_encoded_block_size, full_encoded_block_size,
+                          &data[i * full_block_size]))
           return false;
       }
 
       if (0 < last_block_size)
       {
         if (!decode_block(enc.data() + full_block_count * full_encoded_block_size, last_block_size,
-          &data[full_block_count * full_block_size]))
+                          &data[full_block_count * full_block_size]))
           return false;
       }
 
@@ -226,8 +236,10 @@ namespace Tools
     {
       std::string addr_data;
       bool r = decode(addr, addr_data);
-      if (!r) return false;
-      if (addr_data.size() <= addr_checksum_size) return false;
+      if (!r)
+        return false;
+      if (addr_data.size() <= addr_checksum_size)
+        return false;
 
       std::string checksum(addr_checksum_size, '\0');
       checksum = addr_data.substr(addr_data.size() - addr_checksum_size);
@@ -235,13 +247,15 @@ namespace Tools
       addr_data.resize(addr_data.size() - addr_checksum_size);
       Crypto::Hash hash = Crypto::cn_fast_hash(addr_data.data(), addr_data.size());
       std::string expected_checksum(reinterpret_cast<const char*>(&hash), addr_checksum_size);
-      if (expected_checksum != checksum) return false;
+      if (expected_checksum != checksum)
+        return false;
 
       int read = Tools::read_varint(addr_data.begin(), addr_data.end(), tag);
-      if (read <= 0) return false;
+      if (read <= 0)
+        return false;
 
       data = addr_data.substr(read);
       return true;
     }
-  }
-}
+  }  // namespace Base58
+}  // namespace Tools
