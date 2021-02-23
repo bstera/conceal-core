@@ -247,7 +247,7 @@ namespace PaymentService
 
     void replaceWalletFiles(const std::string &path, const std::string &tempFilePath)
     {
-      Tools::replace_file(tempFilePath, path);
+      Tools::replaceFile(tempFilePath, path);
     }
 
     Crypto::Hash parseHash(const std::string &hashString, Logging::LoggerRef logger)

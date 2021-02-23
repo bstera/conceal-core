@@ -560,7 +560,7 @@ namespace CryptoNote
   //---------------------------------------------------------------------------------
   bool tx_memory_pool::deinit()
   {
-    if (!Tools::create_directories_if_necessary(m_config_folder))
+    if (!Tools::createDirectoriesIfNecessary(m_config_folder))
     {
       logger(INFO) << "Failed to create data directory: " << m_config_folder;
       return false;

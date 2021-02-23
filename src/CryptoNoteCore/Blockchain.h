@@ -61,8 +61,8 @@ namespace CryptoNote
     virtual bool haveSpentKeyImages(const CryptoNote::Transaction &tx) override;
     virtual bool checkTransactionSize(size_t blobSize) override;
 
-    bool init() { return init(Tools::getDefaultDataDirectory(), true); }
-    bool init(const std::string &config_folder, bool load_existing);
+    bool init() { return init(Tools::getDefaultDataDirectory(), true, m_testnet); }
+    bool init(const std::string &config_folder, bool load_existing, bool testnet);
     bool deinit();
 
     bool getLowerBound(uint64_t timestamp, uint64_t startOffset, uint32_t &height);
@@ -217,6 +217,7 @@ namespace CryptoNote
     bool have_tx_keyimg_as_spent(const Crypto::KeyImage &key_im);
 
   private:
+    bool m_testnet;
     struct MultisignatureOutputUsage
     {
       TransactionIndex transactionIndex;
