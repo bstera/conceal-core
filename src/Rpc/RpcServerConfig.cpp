@@ -32,10 +32,13 @@ namespace CryptoNote {
     command_line::add_arg(desc, arg_rpc_bind_port);
   }
 
-  void RpcServerConfig::init(const boost::program_options::variables_map& vm)  {
+  void RpcServerConfig::init(const boost::program_options::variables_map& vm)
+  {
     bool testnet = vm[command_line::arg_testnet_on.name].as<bool>();
     bindIp = command_line::get_arg(vm, arg_rpc_bind_ip);
-    bindPort = testnet ? TESTNET_RPC_DEFAULT_PORT : command_line::get_arg(vm, arg_rpc_bind_port);
+    bindPort = testnet ? !vm[arg_rpc_bind_ip.name].defaulted()
+                             ? TESTNET_RPC_DEFAULT_PORT
+                             : command_line::get_arg(vm, arg_rpc_bind_port)
+                       : command_line::get_arg(vm, arg_rpc_bind_port);
   }
-
 }

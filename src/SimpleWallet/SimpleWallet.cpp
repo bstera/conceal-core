@@ -659,7 +659,11 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
   if (m_daemon_host.empty())
     m_daemon_host = "localhost";
   if (!m_daemon_port)
-    m_daemon_port = vm[command_line::arg_testnet_on.name].as<bool>() ? TESTNET_RPC_DEFAULT_PORT : RPC_DEFAULT_PORT;
+    m_daemon_port = vm[command_line::arg_testnet_on.name].as<bool>()
+                        ? !vm[arg_daemon_port.name].defaulted()
+                              ? TESTNET_RPC_DEFAULT_PORT
+                              : command_line::get_arg(vm, arg_daemon_port)
+                        : command_line::get_arg(vm, arg_daemon_port);
 
   if (!m_daemon_address.empty()) 
   {
@@ -963,7 +967,9 @@ void simple_wallet::handle_command_line(const boost::program_options::variables_
   m_daemon_address = command_line::get_arg(vm, arg_daemon_address);
   m_daemon_host = command_line::get_arg(vm, arg_daemon_host);
   m_daemon_port = vm[command_line::arg_testnet_on.name].as<bool>()
-                      ? TESTNET_RPC_DEFAULT_PORT
+                      ? !vm[arg_daemon_port.name].defaulted()
+                            ? TESTNET_RPC_DEFAULT_PORT
+                            : command_line::get_arg(vm, arg_daemon_port)
                       : command_line::get_arg(vm, arg_daemon_port);
 }
 //----------------------------------------------------------------------------------------------------
