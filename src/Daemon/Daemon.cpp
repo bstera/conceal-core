@@ -238,6 +238,7 @@ int main(int argc, char* argv[])
     NetNodeConfig netNodeConfig;
     netNodeConfig.init(vm);
     netNodeConfig.setTestnet(coreConfig.testnet);
+    netNodeConfig.setConfigFolder(coreConfig.configFolder);
     MinerConfig minerConfig;
     minerConfig.init(vm);
     RpcServerConfig rpcConfig;
