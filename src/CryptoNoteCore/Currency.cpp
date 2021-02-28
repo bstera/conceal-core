@@ -187,7 +187,8 @@ namespace CryptoNote
 
     uint64_t base_reward = 0;
 
-    if (height > CryptoNote::parameters::UPGRADE_HEIGHT_V8)
+    if (height > CryptoNote::parameters::UPGRADE_HEIGHT_V8 ||
+        (isTestnet() && height > m_upgradeHeightV8))
     {
       base_reward = CryptoNote::MAX_BLOCK_REWARD_V1;
     }
@@ -1209,7 +1210,7 @@ namespace CryptoNote
     if (isTestnet() && m_upgradeHeightV8 <= height && height < m_upgradeHeightV8 + N)
     {
       difficulty_guess = 10;
-      logger(INFO, YELLOW) << "guess applied";
+      logger(DEBUGGING, YELLOW) << "guess applied";
       return difficulty_guess;
     }
 

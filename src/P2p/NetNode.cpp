@@ -487,11 +487,19 @@ namespace CryptoNote
   //-----------------------------------------------------------------------------------
 
   bool NodeServer::init(const NetNodeConfig& config) {
-    if (!config.getTestnet()) {
-      for (auto seed : CryptoNote::SEED_NODES) {
+    if (!config.getTestnet())
+    {
+      for (auto seed : CryptoNote::SEED_NODES)
+      {
         append_net_address(m_seed_nodes, seed);
       }
-    } else {
+    }
+    else
+    {
+      for (auto seed : CryptoNote::TESTNET_SEED_NODES)
+      {
+        append_net_address(m_seed_nodes, seed);
+      }
       m_network_id.data[0] += 1;
     }
 

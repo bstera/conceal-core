@@ -154,6 +154,9 @@ namespace CryptoNote
 	const int P2P_DEFAULT_PORT = 15000;
 	const int RPC_DEFAULT_PORT = 16000;
 
+	const int TESTNET_P2P_DEFAULT_PORT = 15500;
+	const int TESTNET_RPC_DEFAULT_PORT = 16600;
+
 	/* P2P Network Configuration Section - This defines our current P2P network version
 	and the minimum version for communication between nodes */
 	const uint8_t P2P_VERSION_1 = 1;
@@ -188,7 +191,12 @@ namespace CryptoNote
 		"94.177.245.107:15000"	 // Lambda
 	};
 
-	struct CheckpointData
+    const std::initializer_list<const char *> TESTNET_SEED_NODES = {
+        "161.97.145.65:15500",
+        "161.97.145.65:15501" 
+    };
+
+        struct CheckpointData
 	{
 		uint32_t height;
 		const char *blockId;
