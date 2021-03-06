@@ -16,6 +16,7 @@ AccountBase::AccountBase() {
 //-----------------------------------------------------------------
 void AccountBase::setNull() {
   m_keys = AccountKeys();
+  m_creation_timestamp = 0;
 }
 //-----------------------------------------------------------------
 void AccountBase::generateViewFromSpend(Crypto::SecretKey &spend, Crypto::SecretKey &viewSecret, Crypto::PublicKey &viewPublic) {
