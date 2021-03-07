@@ -66,6 +66,7 @@ MiningConfig::MiningConfig(): help(false) {
       ("first-block-timestamp", po::value<uint64_t>()->default_value(0), "Set timestamp to the first mined block. 0 means leave timestamp unchanged")
       ("block-timestamp-interval", po::value<int64_t>()->default_value(0), "Timestamp step for each subsequent block. May be set only if --first-block-timestamp has been set."
                                                          " If not set blocks' timestamps remain unchanged");
+  daemonPort = 0;
 }
 
 void MiningConfig::parse(int argc, char** argv) {

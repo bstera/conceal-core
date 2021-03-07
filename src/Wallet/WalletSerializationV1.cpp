@@ -90,7 +90,9 @@ struct WalletTransactionDto {
 
 //DO NOT CHANGE IT
 struct WalletTransferDto {
-  WalletTransferDto(uint32_t version) : version(version) {}
+  WalletTransferDto(uint32_t version) : version(version) {
+    amount = 0;
+  }
   WalletTransferDto(const CryptoNote::WalletTransfer& tr, uint32_t version) : WalletTransferDto(version) {
     address = tr.address;
     amount = tr.amount;
