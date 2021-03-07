@@ -52,7 +52,15 @@ void parseDaemonAddress(const std::string& daemonAddress, std::string& daemonHos
 
 }
 
-MiningConfig::MiningConfig(): help(false) {
+MiningConfig::MiningConfig(): help(false), miningAddress(""), daemonHost(DEFAULT_DAEMON_HOST) {
+  daemonPort = 0;
+  threadCount = CONCURRENCY_LEVEL;
+  scanPeriod = DEFAULT_SCANT_PERIOD;
+  logLevel = 1;
+  blocksLimit = 0;
+  firstBlockTimestamp = 0;
+  blockTimestampInterval = 0;
+
   cmdOptions.add_options()
       ("help,h", "produce this help message and exit")
       ("address", po::value<std::string>(), "Valid cryptonote miner's address")
@@ -66,7 +74,6 @@ MiningConfig::MiningConfig(): help(false) {
       ("first-block-timestamp", po::value<uint64_t>()->default_value(0), "Set timestamp to the first mined block. 0 means leave timestamp unchanged")
       ("block-timestamp-interval", po::value<int64_t>()->default_value(0), "Timestamp step for each subsequent block. May be set only if --first-block-timestamp has been set."
                                                          " If not set blocks' timestamps remain unchanged");
-  daemonPort = 0;
 }
 
 void MiningConfig::parse(int argc, char** argv) {
