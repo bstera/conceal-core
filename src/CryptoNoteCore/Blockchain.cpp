@@ -1108,14 +1108,18 @@ namespace CryptoNote
     logger(INFO, BRIGHT_MAGENTA) << "~~~ line 1108";
     for (auto ch_ent : alt_chain)
     {
+      logger(INFO, BRIGHT_MAGENTA) << "~+~ line 1111";
       blocksFromCommonRoot.push_back(get_block_hash(ch_ent->second.bl));
+      logger(INFO, BRIGHT_MAGENTA) << "~+~ line 1113";
       m_orthanBlocksIndex.remove(ch_ent->second.bl);
+      logger(INFO, BRIGHT_MAGENTA) << "~+~ line 1115";
       m_alternative_chains.erase(ch_ent);
+      logger(INFO, BRIGHT_MAGENTA) << "~+~ line 1117";
     }
-    logger(INFO, BRIGHT_MAGENTA) << "~~~ line 1115";
+    logger(INFO, BRIGHT_MAGENTA) << "~~~ line 1119";
 
     sendMessage(BlockchainMessage(ChainSwitchMessage(std::move(blocksFromCommonRoot))));
-    logger(INFO, BRIGHT_MAGENTA) << "~~~ line 1118";
+    logger(INFO, BRIGHT_MAGENTA) << "~~~ line 1122";
 
     logger(INFO, BRIGHT_GREEN) << "Succesfully reorganized on height: " << split_height << ", new blockchain size: " << m_blocks.size();
     return true;
