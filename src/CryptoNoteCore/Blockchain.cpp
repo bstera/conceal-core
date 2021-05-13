@@ -1106,6 +1106,7 @@ namespace CryptoNote
 
     //removing all_chain entries from alternative chain
     logger(INFO, BRIGHT_MAGENTA) << "~~~ line 1108";
+    logger(INFO, BRIGHT_MAGENTA) << "~~~ alt_chain size: " << alt_chain.size();
     for (auto ch_ent : alt_chain)
     {
       logger(INFO, BRIGHT_MAGENTA) << "~+~ line 1111";
